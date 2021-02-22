@@ -89,6 +89,39 @@ func (v Vmess) ToSurge() string {
 	}
 }
 
+func (v Vmess) ToLoon() string {
+	// # 节点名称 = 协议，服务器地址，端口，加密方式，UUID，传输方式:(tcp/ws),path：websocket握手header中的path，host：websocket握手header中的path，over-tls:是否tls，tls-name：tls名字，skip-cert-verify：是否跳过证书校验（默认否）
+	// 6 = vmess, 1.2.3.4, 10086, aes-128-gcm,"uuid",transport:ws,path:/,host:icloud.com,over-tls:true,tls-name:youtTlsServerName.com,skip-cert-verify:false
+	var cipher string
+	if v.Cipher == "auto" {
+		cipher = "chacha20-ietf-poly1305"
+	} else {
+		cipher = v.Cipher
+	}
+
+	if v.Network == "ws" {
+		text := fmt.Sprintf(`%s = vmess, %s, %d, %s, "%s", transport:%v, path:%s, over-tls:%v`,
+			v.Name, v.Server, v.Port, cipher, v.UUID,
+			v.Network, v.WSPath, v.TLS)
+		if v.TLS {
+			text += ", tls-name:" + v.Server
+			text += fmt.Sprintf(", skip-cert-verify:%v", v.SkipCertVerify)
+		}
+		if v.WSHeaders["HOST"] != "" {
+			text += ", host:" + v.WSHeaders["HOST"]
+		}
+		return text
+	} else {
+		text := fmt.Sprintf(`%s = vmess, %s, %d, %s, "%s", transport:%v, path:%s, over-tls:%v`,
+			v.Name, v.Server, v.Port, cipher, v.UUID,
+			v.Network, v.WSPath, v.TLS)
+		if v.TLS {
+			text += fmt.Sprintf(", skip-cert-verify:%v", v.SkipCertVerify)
+		}
+		return text
+	}
+}
+
 func (v Vmess) Clone() Proxy {
 	return &v
 }

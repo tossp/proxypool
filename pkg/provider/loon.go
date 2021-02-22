@@ -8,28 +8,31 @@ import (
 	"github.com/Sansui233/proxypool/pkg/proxy"
 )
 
-// Surge provides functions that make proxies support clash client
-type Surge struct {
+// Loon provides functions that make proxies support clash client
+type Loon struct {
 	Base
 }
 
 // Provide of Surge generates proxy list supported by surge
-func (s Surge) Provide() string {
+func (s Loon) Provide() string {
 	s.preFilter()
 
 	var resultBuilder strings.Builder
 	for _, p := range *s.Proxies {
-		if checkSurgeSupport(p) {
-			resultBuilder.WriteString(p.ToSurge() + "\n")
+		if checkLoonSupport(p) {
+			resultBuilder.WriteString(p.ToLoon() + "\n")
 		}
 	}
 	return resultBuilder.String()
 }
 
-func checkSurgeSupport(p proxy.Proxy) bool {
+func checkLoonSupport(p proxy.Proxy) bool {
 	switch p.(type) {
 	case *proxy.ShadowsocksR:
-		return false
+		ssr := p.(*proxy.ShadowsocksR)
+		if tool.CheckInList(proxy.SSRCipherList, ssr.Cipher) && tool.CheckInList(ssrProtocolList, ssr.Protocol) && tool.CheckInList(ssrObfsList, ssr.Obfs) {
+			return true
+		}
 	case *proxy.Vmess:
 		return true
 	case *proxy.Shadowsocks:

@@ -15,6 +15,9 @@ var configFilePath = "config.yaml"
 type ConfigOptions struct {
 	Domain            string   `json:"domain" yaml:"domain"`
 	Port              string   `json:"port" yaml:"port"`
+	TLSEnable         bool     `json:"tls_enable" yaml:"tls_enable"`
+	CertFile          string   `json:"cert_file" yaml:"cert_file"`
+	KeyFile           string   `json:"key_file" yaml:"key_file"`
 	DatabaseUrl       string   `json:"database_url" yaml:"database_url"`
 	CrawlInterval     uint64   `json:"crawl-interval" yaml:"crawl-interval"`
 	CFEmail           string   `json:"cf_email" yaml:"cf_email"`
@@ -22,6 +25,7 @@ type ConfigOptions struct {
 	SourceFiles       []string `json:"source-files" yaml:"source-files"`
 	SpeedTest         bool     `json:"speedtest" yaml:"speedtest"`
 	SpeedTestInterval uint64   `json:"speedtest-interval" yaml:"speedtest-interval"`
+	SpeedConcurrent   bool     `json:"speedtest-concurrent" yaml:"speedtest-concurrent"`
 	Connection        int      `json:"connection" yaml:"connection"`
 	Timeout           int      `json:"timeout" yaml:"timeout"`
 	ActiveFrequency   uint16   `json:"active-frequency" yaml:"active-frequency" `

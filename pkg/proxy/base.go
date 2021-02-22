@@ -69,6 +69,7 @@ type Proxy interface {
 	String() string
 	ToClash() string
 	ToSurge() string
+	ToLoon() string
 	Link() string
 	Identifier() string
 	SetName(name string)

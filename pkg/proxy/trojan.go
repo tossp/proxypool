@@ -8,6 +8,8 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+
+	"fmt"
 )
 
 var (
@@ -58,7 +60,15 @@ func (t Trojan) ToClash() string {
 }
 
 func (t Trojan) ToSurge() string {
-	return ""
+	return fmt.Sprintf("%s = trojan, %s, %d, password=%s, skip-cert-verify=%v, udp-relay=%v",
+		t.Name, t.Server, t.Port, t.Password, t.SkipCertVerify, t.UDP)
+}
+
+func (t Trojan) ToLoon() string {
+	// 节点名称 = 协议，服务器地址，端口，密码，tls-name：tls名字，skip-cert-verify：是否跳过证书校验（默认否）
+	// 7 = trojan, 1.2.3.4, 443,password,tls-name:youtTlsServerName.com,skip-cert-verify:false
+	return fmt.Sprintf("%s = trojan, %s, %d, %s, tls-name:%v, skip-cert-verify:%v",
+		t.Name, t.Server, t.Port, t.Password, t.Server, t.SkipCertVerify)
 }
 
 func (t Trojan) Clone() Proxy {

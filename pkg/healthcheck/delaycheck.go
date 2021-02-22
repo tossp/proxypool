@@ -3,6 +3,7 @@ package healthcheck
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/Sansui233/proxypool/config"
 	"github.com/Sansui233/proxypool/pkg/proxy"
 	"sync"
 	"time"
@@ -31,7 +32,9 @@ func CleanBadProxiesWithGrpool(proxies []proxy.Proxy) (cproxies []proxy.Proxy) {
 				defer pool.JobDone()
 				delay, err := testDelay(pp)
 				if err == nil && delay != 0 {
-					m.Lock()
+					if !config.Config.SpeedConcurrent {
+						m.Lock()
+					}
 					if ps, ok := ProxyStats.Find(pp); ok {
 						ps.UpdatePSDelay(delay)
 						c <- ps
@@ -43,7 +46,9 @@ func CleanBadProxiesWithGrpool(proxies []proxy.Proxy) (cproxies []proxy.Proxy) {
 						ProxyStats = append(ProxyStats, *ps)
 						c <- ps
 					}
-					m.Unlock()
+					if !config.Config.SpeedConcurrent {
+						m.Unlock()
+					}
 				}
 			}
 		}
@@ -101,7 +106,8 @@ func testDelay(p proxy.Proxy) (delay uint16, err error) {
 	}
 
 	sTime := time.Now()
-	err = HTTPHeadViaProxy(clashProxy, "http://www.gstatic.com/generate_204")
+	// err = HTTPHeadViaProxy(clashProxy, "http://www.gstatic.com/generate_204")
+	err = HTTPHeadViaProxy(clashProxy, "http://maps.google.com/generate_204")
 	if err != nil {
 		return 0, err
 	}

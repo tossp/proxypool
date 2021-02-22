@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-const UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36"
+const UserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0.3 Safari/605.1.15"
 
 type HttpClient struct {
 	*http.Client
@@ -16,7 +16,7 @@ var httpClient *HttpClient
 
 func init() {
 	httpClient = &HttpClient{http.DefaultClient}
-	httpClient.Timeout = time.Second * 10
+	httpClient.Timeout = time.Second * 60
 }
 
 func GetHttpClient() *HttpClient {
@@ -29,7 +29,7 @@ func (c *HttpClient) Get(url string) (resp *http.Response, err error) {
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Set("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8")
+	// req.Header.Set("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8")
 	req.Header.Set("User-Agent", UserAgent)
 	return c.Do(req)
 }
@@ -39,7 +39,7 @@ func (c *HttpClient) Post(url string, body io.Reader) (resp *http.Response, err 
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Set("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8")
+	// req.Header.Set("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8")
 	req.Header.Set("User-Agent", UserAgent)
 	return c.Do(req)
 }

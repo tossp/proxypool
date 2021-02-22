@@ -65,6 +65,19 @@ func (ss Shadowsocks) ToSurge() string {
 	}
 }
 
+// ToLoon converts proxy to loon proxy string
+func (ss Shadowsocks) ToLoon() string {
+	// 节点名称 = 协议，服务器地址，服务器端口，加密协议，密码，
+	// Shadowsocks, 1.2.3.4, 443, aes-128-gcm, "password"
+	if ss.Plugin == "obfs" {
+		return fmt.Sprintf(`%s = Shadowsocks,%s,%d,%s,"%s",%s,%s`,
+			ss.Name, ss.Server, ss.Port, ss.Cipher, ss.Password, ss.PluginOpts["mode"], ss.PluginOpts["host"])
+	} else {
+		return fmt.Sprintf(`%s = Shadowsocks,%s,%d,%s,"%s",,`,
+			ss.Name, ss.Server, ss.Port, ss.Cipher, ss.Password)
+	}
+}
+
 func (ss Shadowsocks) Clone() Proxy {
 	return &ss
 }

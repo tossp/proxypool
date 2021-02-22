@@ -48,6 +48,11 @@ func speedTestTask() {
 			Proxies: &pl,
 		},
 	}.Provide())
+	cache.SetString("loonproxies", provider.Loon{
+		provider.Base{
+			Proxies: &pl,
+		},
+	}.Provide())
 	runtime.GC()
 }
 
@@ -71,6 +76,11 @@ func frequentSpeedTestTask() {
 		},
 	}.Provide()) // update static string provider
 	cache.SetString("surgeproxies", provider.Surge{
+		provider.Base{
+			Proxies: &pl_all,
+		},
+	}.Provide())
+	cache.SetString("loonproxies", provider.Loon{
 		provider.Base{
 			Proxies: &pl_all,
 		},

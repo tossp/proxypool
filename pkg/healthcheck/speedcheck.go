@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/Sansui233/proxypool/config"
 	"github.com/Dreamacro/clash/adapters/outbound"
 	C "github.com/Dreamacro/clash/constant"
 	"github.com/Sansui233/proxypool/log"
@@ -94,7 +95,9 @@ func SpeedTestNew(proxies []proxy.Proxy, conns int) {
 		pp := p
 		pool.JobQueue <- func() {
 			defer pool.JobDone()
-			m.Lock()
+			if !config.Config.SpeedConcurrent {
+				m.Lock()
+			}
 			if proxyStat, ok := ProxyStats.Find(pp); !ok {
 				// when proxy's Stat not exits
 				speed, err := ProxySpeedTest(pp)
@@ -112,7 +115,9 @@ func SpeedTestNew(proxies []proxy.Proxy, conns int) {
 					resultCount++
 				}
 			}
-			m.Unlock()
+			if !config.Config.SpeedConcurrent {
+				m.Unlock()
+			}
 			doneCount++
 			progress := float64(doneCount) * 100 / float64(len(proxies))
 			fmt.Printf("\r\t[%5.1f%% DONE]", progress)

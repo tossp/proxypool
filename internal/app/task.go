@@ -1,7 +1,6 @@
 package app
 
 import (
-	"fmt"
 	"github.com/Sansui233/proxypool/config"
 	"github.com/Sansui233/proxypool/internal/cache"
 	"github.com/Sansui233/proxypool/internal/database"
@@ -49,7 +48,7 @@ func CrawlGo() {
 		}
 	}
 
-	proxies.NameClear()
+	// proxies.NameClear()
 	proxies = proxies.Derive()
 	log.Infoln("CrawlGo unique proxy count: %d", len(proxies))
 
@@ -89,9 +88,10 @@ func CrawlGo() {
 	log.Infoln("CrawlGo clash usable proxy count: %d", len(proxies))
 
 	// 重命名节点名称为类似US_01的格式，并按国家排序
-	proxies.NameAddCounrty().Sort()
+	proxies.NameClear()
+	proxies.NameAddCountry().Sort()
 	log.Infoln("Proxy rename DONE!")
-
+/*
 	// 中转检测并命名
 	healthcheck.RelayCheck(proxies)
 	for i, _ := range proxies {
@@ -106,8 +106,25 @@ func CrawlGo() {
 			}
 		}
 	}
+*/
+	// 中转检测并命名
+	healthcheck.RelayCheck(proxies)
+	for i, _ := range proxies {
+		if s, ok := healthcheck.ProxyStats.Find(proxies[i]); ok {
+			if s.Relay == true {
+				_, c, e := geoIp.GeoIpDB.Find(s.OutIp)
+				if e == nil {
+					// proxies[i].SetName(fmt.Sprintf("Relay_%s-%s", proxies[i].BaseInfo().Name, c))
+					proxies[i].SetCountry(c)
+					proxies[i].SetName(c)
+				}
+			} else if s.Pool == true {
+				// proxies[i].SetName(fmt.Sprintf("Pool_%s", proxies[i].BaseInfo().Name))
+			}
+		}
+	}
 
-	proxies.NameAddIndex()
+	proxies.Sort().NameAddIndex()
 
 	// 可用节点存储
 	cache.SetProxies("proxies", proxies)
@@ -125,6 +142,11 @@ func CrawlGo() {
 		},
 	}.Provide()) // update static string provider
 	cache.SetString("surgeproxies", provider.Surge{
+		provider.Base{
+			Proxies: &proxies,
+		},
+	}.Provide())
+	cache.SetString("loonproxies", provider.Loon{
 		provider.Base{
 			Proxies: &proxies,
 		},

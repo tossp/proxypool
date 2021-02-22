@@ -2,6 +2,7 @@ package healthcheck
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	C "github.com/Dreamacro/clash/constant"
 	"github.com/Sansui233/proxypool/pkg/proxy"
@@ -134,6 +135,10 @@ func HTTPHeadViaProxy(clashProxy C.Proxy, url string) error {
 		return err
 	}
 	resp.Body.Close()
+
+	if resp.StatusCode == http.StatusBadRequest {
+		return errors.New(http.StatusText(resp.StatusCode))
+	}
 	return nil
 }
 

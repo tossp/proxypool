@@ -180,10 +180,60 @@ func setupRouter() {
 					Types:      proxyTypes,
 					Country:    proxyCountry,
 					NotCountry: proxyNotCountry,
+					Speed:      proxySpeed,
 					Filter:     proxyFilter,
 				},
 			}
 			text = surge.Provide()
+		}
+		c.String(200, text)
+	})
+
+	router.GET("/loon/proxies", func(c *gin.Context) {
+		proxyTypes := c.DefaultQuery("type", "")
+		proxyCountry := c.DefaultQuery("c", "")
+		proxyNotCountry := c.DefaultQuery("nc", "")
+		proxySpeed := c.DefaultQuery("speed", "")
+		proxyFilter := c.DefaultQuery("filter", "")
+		text := ""
+		if proxyTypes == "" && proxyCountry == "" && proxyNotCountry == "" && proxySpeed == "" && proxyFilter == "" {
+			text = appcache.GetString("loonproxies") // A string. To show speed in this if condition, this must be updated after speedtest
+			if text == "" {
+				proxies := appcache.GetProxies("proxies")
+				loon := provider.Loon{
+					Base: provider.Base{
+						Proxies: &proxies,
+					},
+				}
+				text = loon.Provide() // 根据Query筛选节点
+				appcache.SetString("loonproxies", text)
+			}
+		} else if proxyTypes == "all" {
+			proxies := appcache.GetProxies("allproxies")
+			loon := provider.Loon{
+				provider.Base{
+					Proxies:    &proxies,
+					Types:      proxyTypes,
+					Country:    proxyCountry,
+					NotCountry: proxyNotCountry,
+					Speed:      proxySpeed,
+					Filter:     proxyFilter,
+				},
+			}
+			text = loon.Provide() // 根据Query筛选节点
+		} else {
+			proxies := appcache.GetProxies("proxies")
+			loon := provider.Loon{
+				provider.Base{
+					Proxies:    &proxies,
+					Types:      proxyTypes,
+					Country:    proxyCountry,
+					NotCountry: proxyNotCountry,
+					Speed:      proxySpeed,
+					Filter:     proxyFilter,
+				},
+			}
+			text = loon.Provide() // 根据Query筛选节点
 		}
 		c.String(200, text)
 	})
@@ -260,7 +310,13 @@ func Run() {
 		servePort = envp
 	}
 	// Run on this server
-	err := router.Run(":" + servePort)
+	var err error
+	if config.Config.TLSEnable {
+		err = router.RunTLS(":"+servePort, config.Config.CertFile, config.Config.KeyFile)
+	} else {
+		err = router.Run(":" + servePort)
+	}
+
 	if err != nil {
 		log.Errorln("router: Web server starting failed. Make sure your port %s has not been used. \n%s", servePort, err.Error())
 	} else {

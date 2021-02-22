@@ -1,6 +1,9 @@
 # your domain
 domain: example.com
 port:                 # default 12580
+tls_enable:
+cert_file: ""
+key_file: ""
 
 # source list file
 source-files:
@@ -21,6 +24,7 @@ crontime:             # v0.4.x default 60 (minutes). Deprecated in the newest ve
 # speed test
 speedtest: false      # default false. Warning: this will consume large network resources.
 speedtest-interval:   # default 720 (min)
+speedtest-concurrent: # default false
 connection:           # default 5. The number of speed test connections simultaneously
 timeout:              # default 10 (seconds).
 ## active proxy speed test
