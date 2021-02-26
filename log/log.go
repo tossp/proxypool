@@ -17,6 +17,8 @@ var (
 
 func init() {
 	log.SetFormatter(&prefixed.TextFormatter{
+		FullTimestamp:   true,
+		TimestampFormat: "2006-01-02 15:04:05",
 		ForceFormatting: true,
 	})
 	log.SetOutput(os.Stdout)
