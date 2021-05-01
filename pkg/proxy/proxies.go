@@ -2,7 +2,6 @@ package proxy
 
 import (
 	"fmt"
-	"github.com/Sansui233/proxypool/pkg/geoIp"
 	"sort"
 	"strings"
 )
@@ -78,12 +77,6 @@ func (ps ProxyList) NameClear() ProxyList {
 func (ps ProxyList) NameAddCountry() ProxyList {
 	num := len(ps)
 	for i := 0; i < num; i++ {
-		_, country, err := geoIp.GeoIpDB.Find(ps[i].BaseInfo().Server) // IP库不准
-		if err != nil {
-			country = "🏁 ZZ"
-		}
-		ps[i].SetCountry(country)
-
 		ps[i].SetName(ps[i].BaseInfo().Name + ps[i].BaseInfo().Country)
 	}
 	return ps
