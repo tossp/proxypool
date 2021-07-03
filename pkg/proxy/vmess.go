@@ -77,15 +77,15 @@ func (v Vmess) ToSurge() string {
 				wsHeasers += "|" + k + ":" + v
 			}
 		}
-		text := fmt.Sprintf("%s = vmess, %s, %d, username=%s, ws=true, tls=%t, ws-path=%s",
-			v.Name, v.Server, v.Port, v.UUID, v.TLS, v.WSPath)
+		text := fmt.Sprintf("%s = vmess, %s, %d, username=%s, ws=true, tls=%t, ws-path=%s, skip-cert-verify=%v",
+			v.Name, v.Server, v.Port, v.UUID, v.TLS, v.WSPath, v.SkipCertVerify)
 		if wsHeasers != "" {
 			text += ", ws-headers=" + wsHeasers
 		}
 		return text
 	} else {
-		return fmt.Sprintf("%s = vmess, %s, %d, username=%s, tls=%t",
-			v.Name, v.Server, v.Port, v.UUID, v.TLS)
+		return fmt.Sprintf("%s = vmess, %s, %d, username=%s, tls=%t, skip-cert-verify=%v",
+			v.Name, v.Server, v.Port, v.UUID, v.TLS, v.SkipCertVerify)
 	}
 }
 
