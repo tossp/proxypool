@@ -7,6 +7,8 @@ import (
 	"strings"
 	"sync"
 
+	conf "github.com/Sansui233/proxypool/config"
+
 	"github.com/Sansui233/proxypool/pkg/proxy"
 	"github.com/Sansui233/proxypool/pkg/tool"
 	"github.com/gocolly/colly"
@@ -47,7 +49,8 @@ func NewTGChannelGetter(options tool.Options) (getter Getter, err error) {
 			c:         tool.GetColly(),
 			NumNeeded: t,
 			Url:       "https://t.me/s/" + url,
-			apiUrl:    "https://tg.i-c-a.su/rss/" + url,
+			// apiUrl:    "https://tg.i-c-a.su/rss/" + url,
+			apiUrl: conf.Config.TgChannelProxyUrl + url,
 		}, nil
 	}
 	return nil, ErrorUrlNotFound

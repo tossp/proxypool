@@ -31,6 +31,7 @@ type ConfigOptions struct {
 	ActiveFrequency   uint16   `json:"active-frequency" yaml:"active-frequency" `
 	ActiveInterval    uint64   `json:"active-interval" yaml:"active-interval"`
 	ActiveMaxNumber   uint16   `json:"active-max-number" yaml:"active-max-number"`
+	TgChannelProxyUrl string   `json:"tg_channel_proxy_url" yaml:"tg_channel_proxy_url"`
 }
 
 // Config 配置
