@@ -1,8 +1,9 @@
 package provider
 
 import (
-	"github.com/Sansui233/proxypool/pkg/tool"
 	"strings"
+
+	"github.com/One-Piecs/proxypool/pkg/tool"
 )
 
 type TrojanSub struct {

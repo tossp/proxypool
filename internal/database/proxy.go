@@ -1,10 +1,11 @@
 package database
 
 import (
-	"github.com/Sansui233/proxypool/log"
-	"github.com/Sansui233/proxypool/pkg/proxy"
-	"gorm.io/gorm"
 	"time"
+
+	"github.com/One-Piecs/proxypool/log"
+	"github.com/One-Piecs/proxypool/pkg/proxy"
+	"gorm.io/gorm"
 )
 
 // 设置数据库字段，表名为默认为type名的复数。相比于原作者，不使用软删除特性

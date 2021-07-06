@@ -3,10 +3,11 @@ package healthcheck
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/Sansui233/proxypool/config"
-	"github.com/Sansui233/proxypool/pkg/proxy"
 	"sync"
 	"time"
+
+	"github.com/One-Piecs/proxypool/config"
+	"github.com/One-Piecs/proxypool/pkg/proxy"
 
 	"github.com/ivpusic/grpool"
 

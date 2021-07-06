@@ -4,14 +4,15 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/Dreamacro/clash/adapters/outbound"
-	"github.com/Sansui233/proxypool/config"
-	"github.com/Sansui233/proxypool/log"
-	"github.com/Sansui233/proxypool/pkg/proxy"
-	"github.com/ivpusic/grpool"
 	"net"
 	"sync"
 	"time"
+
+	"github.com/Dreamacro/clash/adapters/outbound"
+	"github.com/One-Piecs/proxypool/config"
+	"github.com/One-Piecs/proxypool/log"
+	"github.com/One-Piecs/proxypool/pkg/proxy"
+	"github.com/ivpusic/grpool"
 )
 
 func RelayCheck(proxies proxy.ProxyList) {

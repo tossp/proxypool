@@ -1,12 +1,13 @@
 package getter
 
 import (
-	"github.com/Sansui233/proxypool/log"
-	"github.com/Sansui233/proxypool/pkg/proxy"
-	"github.com/Sansui233/proxypool/pkg/tool"
-	"gopkg.in/yaml.v3"
 	"io/ioutil"
 	"sync"
+
+	"github.com/One-Piecs/proxypool/log"
+	"github.com/One-Piecs/proxypool/pkg/proxy"
+	"github.com/One-Piecs/proxypool/pkg/tool"
+	"gopkg.in/yaml.v3"
 )
 
 func init() {

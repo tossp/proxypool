@@ -1,8 +1,6 @@
 package api
 
 import (
-	binhtml "github.com/Sansui233/proxypool/internal/bindata/html"
-	"github.com/Sansui233/proxypool/log"
 	"html/template"
 	"net/http"
 	"os"
@@ -10,9 +8,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Sansui233/proxypool/config"
-	appcache "github.com/Sansui233/proxypool/internal/cache"
-	"github.com/Sansui233/proxypool/pkg/provider"
+	binhtml "github.com/One-Piecs/proxypool/internal/bindata/html"
+	"github.com/One-Piecs/proxypool/log"
+
+	"github.com/One-Piecs/proxypool/config"
+	appcache "github.com/One-Piecs/proxypool/internal/cache"
+	"github.com/One-Piecs/proxypool/pkg/provider"
 	"github.com/gin-contrib/cache"
 	"github.com/gin-contrib/cache/persistence"
 	"github.com/gin-gonic/gin"

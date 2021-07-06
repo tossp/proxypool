@@ -3,9 +3,9 @@ package provider
 import (
 	"strings"
 
-	"github.com/Sansui233/proxypool/pkg/tool"
+	"github.com/One-Piecs/proxypool/pkg/tool"
 
-	"github.com/Sansui233/proxypool/pkg/proxy"
+	"github.com/One-Piecs/proxypool/pkg/proxy"
 )
 
 // Loon provides functions that make proxies support clash client

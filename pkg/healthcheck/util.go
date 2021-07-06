@@ -3,13 +3,14 @@ package healthcheck
 import (
 	"context"
 	"fmt"
-	C "github.com/Dreamacro/clash/constant"
-	"github.com/Sansui233/proxypool/pkg/proxy"
 	"io/ioutil"
 	"net"
 	"net/http"
 	"net/url"
 	"time"
+
+	C "github.com/Dreamacro/clash/constant"
+	"github.com/One-Piecs/proxypool/pkg/proxy"
 )
 
 // DO NOT EDIT. Copied from clash because it's an unexported function

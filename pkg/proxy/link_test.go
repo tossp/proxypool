@@ -2,9 +2,10 @@ package proxy
 
 import (
 	"fmt"
-	"github.com/Sansui233/proxypool/pkg/tool"
-	"github.com/ghodss/yaml"
 	"testing"
+
+	"github.com/One-Piecs/proxypool/pkg/tool"
+	"github.com/ghodss/yaml"
 )
 
 func TestSSLink(t *testing.T) {

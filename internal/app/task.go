@@ -1,16 +1,17 @@
 package app
 
 import (
-	"github.com/Sansui233/proxypool/config"
-	"github.com/Sansui233/proxypool/internal/cache"
-	"github.com/Sansui233/proxypool/internal/database"
-	"github.com/Sansui233/proxypool/log"
-	"github.com/Sansui233/proxypool/pkg/geoIp"
-	"github.com/Sansui233/proxypool/pkg/healthcheck"
-	"github.com/Sansui233/proxypool/pkg/provider"
-	"github.com/Sansui233/proxypool/pkg/proxy"
 	"sync"
 	"time"
+
+	"github.com/One-Piecs/proxypool/config"
+	"github.com/One-Piecs/proxypool/internal/cache"
+	"github.com/One-Piecs/proxypool/internal/database"
+	"github.com/One-Piecs/proxypool/log"
+	"github.com/One-Piecs/proxypool/pkg/geoIp"
+	"github.com/One-Piecs/proxypool/pkg/healthcheck"
+	"github.com/One-Piecs/proxypool/pkg/provider"
+	"github.com/One-Piecs/proxypool/pkg/proxy"
 )
 
 var location, _ = time.LoadLocation("PRC")
@@ -91,22 +92,22 @@ func CrawlGo() {
 	proxies.NameClear()
 	proxies.NameAddCountry().Sort()
 	log.Infoln("Proxy rename DONE!")
-/*
-	// 中转检测并命名
-	healthcheck.RelayCheck(proxies)
-	for i, _ := range proxies {
-		if s, ok := healthcheck.ProxyStats.Find(proxies[i]); ok {
-			if s.Relay == true {
-				_, c, e := geoIp.GeoIpDB.Find(s.OutIp)
-				if e == nil {
-					proxies[i].SetName(fmt.Sprintf("Relay_%s-%s", proxies[i].BaseInfo().Name, c))
+	/*
+		// 中转检测并命名
+		healthcheck.RelayCheck(proxies)
+		for i, _ := range proxies {
+			if s, ok := healthcheck.ProxyStats.Find(proxies[i]); ok {
+				if s.Relay == true {
+					_, c, e := geoIp.GeoIpDB.Find(s.OutIp)
+					if e == nil {
+						proxies[i].SetName(fmt.Sprintf("Relay_%s-%s", proxies[i].BaseInfo().Name, c))
+					}
+				} else if s.Pool == true {
+					proxies[i].SetName(fmt.Sprintf("Pool_%s", proxies[i].BaseInfo().Name))
 				}
-			} else if s.Pool == true {
-				proxies[i].SetName(fmt.Sprintf("Pool_%s", proxies[i].BaseInfo().Name))
 			}
 		}
-	}
-*/
+	*/
 	// 中转检测并命名
 	healthcheck.RelayCheck(proxies)
 	for i, _ := range proxies {
