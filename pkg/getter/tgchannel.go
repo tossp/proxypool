@@ -97,7 +97,7 @@ func (g *TGChannelGetter) Get() proxy.ProxyList {
 			elements := strings.Split(s, "\"")
 			for _, e := range elements {
 				if strings.Contains(e, "https://") {
-					// Webfuzz的可能性比较大，也有可能是订阅链接，为了不拖慢运行速度不写了
+					// TODO Webfuzz的可能性比较大，也有可能是订阅链接，为了不拖慢运行速度不写了
 					result = append(result, (&WebFuzz{Url: e}).Get()...)
 				}
 			}

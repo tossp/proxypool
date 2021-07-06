@@ -38,3 +38,4 @@ cf_key: ""
 
 #tg_channel_proxy_url: "https://tg.i-c-a.su/rss/"
 tg_channel_proxy_url: "http://127.0.0.1:9504/rss/"
+#tg_channel_web_proxy_url: "http://127.0.0.1:7890"
