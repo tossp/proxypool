@@ -8,7 +8,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Dreamacro/clash/adapters/outbound"
+	"github.com/Dreamacro/clash/adapter"
+
 	"github.com/One-Piecs/proxypool/config"
 	"github.com/One-Piecs/proxypool/log"
 	"github.com/One-Piecs/proxypool/pkg/proxy"
@@ -89,7 +90,7 @@ func testRelay(p proxy.Proxy) (outip string, err error) {
 		}
 	}
 
-	clashProxy, err := outbound.ParseProxy(pmap)
+	clashProxy, err := adapter.ParseProxy(pmap)
 	if err != nil {
 		return "", err
 	}
