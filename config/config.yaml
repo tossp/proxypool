@@ -36,5 +36,5 @@ active-max-number:    # default 100. If more than this number of active proxies,
 cf_email: ""
 cf_key: ""
 
-#tg_channel_proxy_url: "https://tg.i-c-a.su/"
-tg_channel_proxy_url: "http://127.0.0.1:9504/"
+#tg_channel_proxy_url: "https://tg.i-c-a.su/rss/"
+tg_channel_proxy_url: "http://127.0.0.1:9504/rss/"
