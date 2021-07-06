@@ -96,7 +96,8 @@ func (g *TGChannelGetter) Get() proxy.ProxyList {
 		if strings.Contains(s, "enclosure url") { // get to xml node
 			elements := strings.Split(s, "\"")
 			for _, e := range elements {
-				if strings.Contains(e, "https://") {
+				// add 内部部署 http
+				if strings.Contains(e, "https://") || strings.Contains(e, "http://") {
 					// TODO Webfuzz的可能性比较大，也有可能是订阅链接，为了不拖慢运行速度不写了
 					result = append(result, (&WebFuzz{Url: e}).Get()...)
 				}
