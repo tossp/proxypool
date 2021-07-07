@@ -95,8 +95,8 @@ func (g *TGChannelGetter) Get() proxy.ProxyList {
 	body, err := ioutil.ReadAll(resp.Body)
 	items := strings.Split(string(body), "\n")
 
-	var wp = workerpool.New(20)
-	var m sync.Mutex
+	wp := workerpool.New(50)
+	m := sync.Mutex{}
 
 	for _, s := range items {
 		ss := s
@@ -107,15 +107,19 @@ func (g *TGChannelGetter) Get() proxy.ProxyList {
 					// add 内部部署 http
 					if strings.Contains(e, "https://") || strings.Contains(e, "http://") {
 						// TODO Webfuzz的可能性比较大，也有可能是订阅链接，为了不拖慢运行速度不写了
+						subResult := (&WebFuzz{Url: e}).Get()
+
+						log.Infoln("STATISTIC: TGChannel\tcount=%d\turl=%s\tsub_url=%s\n",
+							len(subResult), g.Url, e)
 						m.Lock()
-						result = append(result, (&WebFuzz{Url: e}).Get()...)
+						result = append(result, subResult...)
 						m.Unlock()
 					}
 				}
 			}
 		})
-		wp.StopWait()
 	}
+	wp.StopWait()
 	return result
 }
 

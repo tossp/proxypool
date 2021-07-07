@@ -16,7 +16,7 @@ var httpClient *HttpClient
 
 func init() {
 	httpClient = &HttpClient{http.DefaultClient}
-	httpClient.Timeout = time.Second * 60
+	httpClient.Timeout = time.Second * 30
 }
 
 func GetHttpClient() *HttpClient {
