@@ -94,6 +94,8 @@ func CleanBadProxiesWithWorkpool(proxies []proxy.Proxy) (cproxies []proxy.Proxy)
 	var doneCount uint32
 	var total = len(proxies)
 
+	fmt.Printf("\r\t%d/%d", doneCount, total)
+
 	for _, p := range proxies {
 		pp := p
 		pool.Submit(func() {
@@ -161,6 +163,10 @@ func testDelay(p proxy.Proxy) (delay uint16, err error) {
 		if network, ok := pmap["network"]; ok && network.(string) == "h2" {
 			return 0, nil // todo 暂无方法测试h2的延迟，clash对于h2的connection会阻塞
 		}
+	}
+
+	if p.TypeName() == "trojan" && p.BaseInfo().Server == "nl-trojan.bonds.id" {
+		return 0, nil // 此 trojan 节点会阻塞
 	}
 
 	clashProxy, err := adapter.ParseProxy(pmap)
