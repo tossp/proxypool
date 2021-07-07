@@ -1,6 +1,7 @@
 package healthcheck
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"sync"
@@ -8,7 +9,6 @@ import (
 
 	"github.com/Dreamacro/clash/adapter"
 
-	"github.com/One-Piecs/proxypool/config"
 	"github.com/One-Piecs/proxypool/pkg/proxy"
 
 	"github.com/ivpusic/grpool"
@@ -33,9 +33,7 @@ func CleanBadProxiesWithGrpool(proxies []proxy.Proxy) (cproxies []proxy.Proxy) {
 				defer pool.JobDone()
 				delay, err := testDelay(pp)
 				if err == nil && delay != 0 {
-					if !config.Config.SpeedConcurrent {
-						m.Lock()
-					}
+					m.Lock()
 					if ps, ok := ProxyStats.Find(pp); ok {
 						ps.UpdatePSDelay(delay)
 						c <- ps
@@ -47,9 +45,7 @@ func CleanBadProxiesWithGrpool(proxies []proxy.Proxy) (cproxies []proxy.Proxy) {
 						ProxyStats = append(ProxyStats, *ps)
 						c <- ps
 					}
-					if !config.Config.SpeedConcurrent {
-						m.Unlock()
-					}
+					m.Unlock()
 				}
 			}
 		}
@@ -105,15 +101,16 @@ func testDelay(p proxy.Proxy) (delay uint16, err error) {
 		fmt.Println(err.Error())
 		return 0, err
 	}
-
-	sTime := time.Now()
-	// err = HTTPHeadViaProxy(clashProxy, "http://www.gstatic.com/generate_204")
-	err = HTTPHeadViaProxy(clashProxy, "http://maps.google.com/generate_204")
-	if err != nil {
-		return 0, err
-	}
-	fTime := time.Now()
-	delay = uint16(fTime.Sub(sTime) / time.Millisecond)
-
-	return delay, nil
+	/*
+		sTime := time.Now()
+		// err = HTTPHeadViaProxy(clashProxy, "http://www.gstatic.com/generate_204")
+		err = HTTPHeadViaProxy(clashProxy, "http://maps.google.com/generate_204")
+		if err != nil {
+			return 0, err
+		}
+		fTime := time.Now()
+		delay = uint16(fTime.Sub(sTime) / time.Millisecond)
+		return delay, nil
+	*/
+	return clashProxy.URLTest(context.Background(), "http://www.google.com/generate_204")
 }

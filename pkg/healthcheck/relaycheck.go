@@ -10,7 +10,6 @@ import (
 
 	"github.com/Dreamacro/clash/adapter"
 
-	"github.com/One-Piecs/proxypool/config"
 	"github.com/One-Piecs/proxypool/log"
 	"github.com/One-Piecs/proxypool/pkg/proxy"
 	"github.com/ivpusic/grpool"
@@ -30,9 +29,7 @@ func RelayCheck(proxies proxy.ProxyList) {
 				defer pool.JobDone()
 				out, err := testRelay(pp)
 				if err == nil && out != "" {
-					if !config.Config.SpeedConcurrent {
-						m.Lock()
-					}
+					m.Lock()
 					// Relay or pool
 					if isRelay(pp.BaseInfo().Server, out) {
 						if ps, ok := ProxyStats.Find(pp); ok {
@@ -59,9 +56,7 @@ func RelayCheck(proxies proxy.ProxyList) {
 							ProxyStats = append(ProxyStats, *ps)
 						}
 					}
-					if !config.Config.SpeedConcurrent {
-						m.Unlock()
-					}
+					m.Unlock()
 				}
 				doneCount++
 				progress := float64(doneCount) * 100 / float64(len(proxies))
