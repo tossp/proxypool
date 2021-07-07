@@ -71,6 +71,12 @@ func (v Vmess) ToSurge() string {
 	if v.Network == "ws" {
 		wsHeasers := ""
 		for k, v := range v.WSHeaders {
+
+			// surge head v 多组分割要注意 ':'  ','
+			v = strings.ReplaceAll(v, "http://", "")
+			v = strings.ReplaceAll(v, "https://", "")
+			v = strings.ReplaceAll(v, ",", "%2c")
+
 			if wsHeasers == "" {
 				wsHeasers = k + ":" + v
 			} else {
