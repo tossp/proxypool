@@ -72,7 +72,7 @@ func RelayCheck(proxies proxy.ProxyList) {
 }
 
 func RelayCheckWorkpool(proxies proxy.ProxyList) {
-	pool := workerpool.New(200)
+	pool := workerpool.New(500)
 	m := sync.Mutex{}
 
 	log.Infoln("Relay Test ON")

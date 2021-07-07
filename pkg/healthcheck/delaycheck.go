@@ -85,7 +85,7 @@ func CleanBadProxiesWithGrpool(proxies []proxy.Proxy) (cproxies []proxy.Proxy) {
 
 func CleanBadProxiesWithWorkpool(proxies []proxy.Proxy) (cproxies []proxy.Proxy) {
 
-	pool := workerpool.New(200)
+	pool := workerpool.New(500)
 
 	c := make(chan *Stat)
 	defer close(c)

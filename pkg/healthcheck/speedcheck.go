@@ -16,7 +16,6 @@ import (
 	"github.com/Dreamacro/clash/adapter"
 
 	C "github.com/Dreamacro/clash/constant"
-	"github.com/One-Piecs/proxypool/config"
 	"github.com/One-Piecs/proxypool/log"
 	"github.com/One-Piecs/proxypool/pkg/proxy"
 	"github.com/ivpusic/grpool"
@@ -147,18 +146,20 @@ func SpeedTestNew(proxies []proxy.Proxy, conns int) {
 		pp := p
 		pool.JobQueue <- func() {
 			defer pool.JobDone()
-			if !config.Config.SpeedConcurrent {
-				m.Lock()
-			}
-			if proxyStat, ok := ProxyStats.Find(pp); !ok {
+			m.Lock()
+			proxyStat, ok := ProxyStats.Find(pp)
+			m.Unlock()
+			if !ok {
 				// when proxy's Stat not exits
 				speed, err := ProxySpeedTest(pp)
 				if err == nil || speed > 0 {
+					m.Lock()
 					ProxyStats = append(ProxyStats, Stat{
 						Id:    pp.Identifier(),
 						Speed: speed,
 					})
 					resultCount++
+					m.Unlock()
 				}
 			} else if proxyStat.Speed == 0 {
 				speed, err := ProxySpeedTest(pp)
@@ -166,9 +167,6 @@ func SpeedTestNew(proxies []proxy.Proxy, conns int) {
 					proxyStat.UpdatePSSpeed(speed)
 					resultCount++
 				}
-			}
-			if !config.Config.SpeedConcurrent {
-				m.Unlock()
 			}
 			doneCount++
 			progress := float64(doneCount) * 100 / float64(len(proxies))
@@ -201,18 +199,20 @@ func SpeedTestNewWithWorkpool(proxies []proxy.Proxy, conns int) {
 	for _, p := range proxies {
 		pp := p
 		pool.Submit(func() {
-			if !config.Config.SpeedConcurrent {
-				m.Lock()
-			}
-			if proxyStat, ok := ProxyStats.Find(pp); !ok {
+			m.Lock()
+			proxyStat, ok := ProxyStats.Find(pp)
+			m.Unlock()
+			if !ok {
 				// when proxy's Stat not exits
 				speed, err := ProxySpeedTest(pp)
 				if err == nil || speed > 0 {
+					m.Lock()
 					ProxyStats = append(ProxyStats, Stat{
 						Id:    pp.Identifier(),
 						Speed: speed,
 					})
 					resultCount++
+					m.Unlock()
 				}
 			} else if proxyStat.Speed == 0 {
 				speed, err := ProxySpeedTest(pp)
@@ -221,9 +221,7 @@ func SpeedTestNewWithWorkpool(proxies []proxy.Proxy, conns int) {
 					resultCount++
 				}
 			}
-			if !config.Config.SpeedConcurrent {
-				m.Unlock()
-			}
+
 			doneCount++
 			progress := float64(doneCount) * 100 / float64(len(proxies))
 			fmt.Printf("\r\t[%5.1f%% DONE]", progress)
