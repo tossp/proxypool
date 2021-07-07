@@ -11,6 +11,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/gammazero/workerpool"
+
 	"github.com/Dreamacro/clash/adapter"
 
 	C "github.com/Dreamacro/clash/constant"
@@ -74,6 +76,51 @@ func SpeedTestAll(proxies []proxy.Proxy, conns int) {
 	log.Infoln("Speed Test Done. Count all speed results: %d", resultCount)
 }
 
+func SpeedTestAllWithWorkpool(proxies []proxy.Proxy, conns int) {
+	SpeedExist = true
+	if ok := checkErrorProxies(proxies); !ok {
+		return
+	}
+	numWorker := conns
+	if numWorker <= 0 {
+		numWorker = 5
+	}
+
+	resultCount := 0
+	m := sync.Mutex{}
+
+	log.Infoln("Speed Test ON")
+	doneCount := 0
+	// use grpool
+	pool := workerpool.New(numWorker)
+
+	for _, p := range proxies {
+		pp := p
+		pool.Submit(func() {
+			speed, err := ProxySpeedTest(pp)
+			if err == nil || speed > 0 {
+				m.Lock()
+				if proxyStat, ok := ProxyStats.Find(pp); ok {
+					proxyStat.UpdatePSSpeed(speed)
+				} else {
+					ProxyStats = append(ProxyStats, Stat{
+						Id:    pp.Identifier(),
+						Speed: speed,
+					})
+				}
+				resultCount++
+				m.Unlock()
+			}
+			doneCount++
+			progress := float64(doneCount) * 100 / float64(len(proxies))
+			fmt.Printf("\r\t[%5.1f%% DONE]", progress)
+		})
+	}
+	pool.StopWait()
+	fmt.Println()
+	log.Infoln("Speed Test Done. Count all speed results: %d", resultCount)
+}
+
 // SpeedTestNew tests speed of new proxies which is not in ProxyStats. Then appended to ProxyStats
 func SpeedTestNew(proxies []proxy.Proxy, conns int) {
 	SpeedExist = true
@@ -130,6 +177,59 @@ func SpeedTestNew(proxies []proxy.Proxy, conns int) {
 	}
 	pool.WaitAll()
 	pool.Release()
+	fmt.Println()
+	log.Infoln("Speed Test Done. New speed results count: %d", resultCount)
+}
+
+func SpeedTestNewWithWorkpool(proxies []proxy.Proxy, conns int) {
+	SpeedExist = true
+	if ok := checkErrorProxies(proxies); !ok {
+		return
+	}
+	numWorker := conns
+	if numWorker <= 0 {
+		numWorker = 5
+	}
+
+	resultCount := 0
+	m := sync.Mutex{}
+
+	log.Infoln("Speed Test ON")
+	doneCount := 0
+
+	pool := workerpool.New(numWorker)
+	for _, p := range proxies {
+		pp := p
+		pool.Submit(func() {
+			if !config.Config.SpeedConcurrent {
+				m.Lock()
+			}
+			if proxyStat, ok := ProxyStats.Find(pp); !ok {
+				// when proxy's Stat not exits
+				speed, err := ProxySpeedTest(pp)
+				if err == nil || speed > 0 {
+					ProxyStats = append(ProxyStats, Stat{
+						Id:    pp.Identifier(),
+						Speed: speed,
+					})
+					resultCount++
+				}
+			} else if proxyStat.Speed == 0 {
+				speed, err := ProxySpeedTest(pp)
+				if err == nil || speed > 0 {
+					proxyStat.UpdatePSSpeed(speed)
+					resultCount++
+				}
+			}
+			if !config.Config.SpeedConcurrent {
+				m.Unlock()
+			}
+			doneCount++
+			progress := float64(doneCount) * 100 / float64(len(proxies))
+			fmt.Printf("\r\t[%5.1f%% DONE]", progress)
+		})
+	}
+	pool.StopWait()
 	fmt.Println()
 	log.Infoln("Speed Test Done. New speed results count: %d", resultCount)
 }

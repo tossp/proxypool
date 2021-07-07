@@ -8,6 +8,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/gammazero/workerpool"
+
 	"github.com/Dreamacro/clash/adapter"
 
 	"github.com/One-Piecs/proxypool/log"
@@ -66,6 +68,57 @@ func RelayCheck(proxies proxy.ProxyList) {
 	}()
 	pool.WaitAll()
 	pool.Release()
+	fmt.Println()
+}
+
+func RelayCheckWorkpool(proxies proxy.ProxyList) {
+	pool := workerpool.New(200)
+	m := sync.Mutex{}
+
+	log.Infoln("Relay Test ON")
+	doneCount := 0
+
+	for _, p := range proxies {
+		pp := p
+		pool.Submit(func() {
+			out, err := testRelay(pp)
+			if err == nil && out != "" {
+				m.Lock()
+				// Relay or pool
+				if isRelay(pp.BaseInfo().Server, out) {
+					if ps, ok := ProxyStats.Find(pp); ok {
+						ps.UpdatePSOutIp(out)
+						ps.Relay = true
+					} else {
+						ps = &Stat{
+							Id:    pp.Identifier(),
+							Relay: true,
+							OutIp: out,
+						}
+						ProxyStats = append(ProxyStats, *ps)
+					}
+				} else { // is pool ip
+					if ps, ok := ProxyStats.Find(pp); ok {
+						ps.UpdatePSOutIp(out)
+						ps.Pool = true
+					} else {
+						ps = &Stat{
+							Id:    pp.Identifier(),
+							Pool:  true,
+							OutIp: out,
+						}
+						ProxyStats = append(ProxyStats, *ps)
+					}
+				}
+				m.Unlock()
+			}
+			doneCount++
+			progress := float64(doneCount) * 100 / float64(len(proxies))
+			fmt.Printf("\r\t[%5.1f%% DONE]", progress)
+		})
+	}
+
+	pool.StopWait()
 	fmt.Println()
 }
 

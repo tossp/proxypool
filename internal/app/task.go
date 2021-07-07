@@ -76,15 +76,18 @@ func CrawlGo() {
 
 	// 节点可用性检测，使用batchsize不能降低内存占用，只是为了看性能
 	log.Infoln("Now proceed proxy health check...")
-	b := 1000
-	round := len(proxies) / b
-	okproxies := make(proxy.ProxyList, 0)
-	for i := 0; i < round; i++ {
-		okproxies = append(okproxies, healthcheck.CleanBadProxiesWithGrpool(proxies[i*b:(i+1)*b])...)
-		log.Infoln("\tChecking round: %d", i)
-	}
-	okproxies = append(okproxies, healthcheck.CleanBadProxiesWithGrpool(proxies[round*b:])...)
-	proxies = okproxies
+	/*
+		b := 1000
+		round := len(proxies) / b
+		okproxies := make(proxy.ProxyList, 0)
+		for i := 0; i < round; i++ {
+			okproxies = append(okproxies, healthcheck.CleanBadProxiesWithWorkpool(proxies[i*b:(i+1)*b])...)
+			log.Infoln("\tChecking round: %d", i)
+		}
+		okproxies = append(okproxies, healthcheck.CleanBadProxiesWithWorkpool(proxies[round*b:])...)
+		proxies = okproxies
+	*/
+	proxies = healthcheck.CleanBadProxiesWithWorkpool(proxies)
 
 	log.Infoln("CrawlGo clash usable proxy count: %d", len(proxies))
 
@@ -109,7 +112,7 @@ func CrawlGo() {
 		}
 	*/
 	// 中转检测并命名
-	healthcheck.RelayCheck(proxies)
+	healthcheck.RelayCheckWorkpool(proxies)
 	for i, _ := range proxies {
 		if s, ok := healthcheck.ProxyStats.Find(proxies[i]); ok {
 			if s.Relay == true {
@@ -161,7 +164,7 @@ func speedTestNew(proxies proxy.ProxyList) {
 		if config.Config.Timeout > 0 {
 			healthcheck.SpeedTimeout = time.Second * time.Duration(config.Config.Timeout)
 		}
-		healthcheck.SpeedTestNew(proxies, config.Config.Connection)
+		healthcheck.SpeedTestNewWithWorkpool(proxies, config.Config.Connection)
 	} else {
 		cache.IsSpeedTest = "未开启"
 	}
@@ -174,7 +177,7 @@ func SpeedTest(proxies proxy.ProxyList) {
 		if config.Config.Timeout > 0 {
 			healthcheck.SpeedTimeout = time.Second * time.Duration(config.Config.Timeout)
 		}
-		healthcheck.SpeedTestAll(proxies, config.Config.Connection)
+		healthcheck.SpeedTestAllWithWorkpool(proxies, config.Config.Connection)
 	} else {
 		cache.IsSpeedTest = "未开启"
 	}
