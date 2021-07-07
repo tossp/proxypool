@@ -11,8 +11,9 @@ require (
 	github.com/antchfx/htmlquery v1.2.3 // indirect
 	github.com/antchfx/xmlquery v1.2.4 // indirect
 	github.com/antchfx/xpath v1.1.8 // indirect
+	github.com/arl/statsviz v0.4.0
 	github.com/cloudflare/cloudflare-go v0.13.5
-	github.com/gammazero/workerpool v1.1.2 // indirect
+	github.com/gammazero/workerpool v1.1.2
 	github.com/ghodss/yaml v1.0.0
 	github.com/gin-contrib/cache v1.1.0
 	github.com/gin-gonic/gin v1.6.3

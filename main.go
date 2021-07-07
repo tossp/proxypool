@@ -33,7 +33,7 @@ func main() {
 		log.SetLevel(log.DEBUG)
 	}
 
-	if err := agent.Listen(agent.Options{ShutdownCleanup: true}); err != nil {
+	if err := agent.Listen(agent.Options{Addr: "0.0.0.0:8848", ShutdownCleanup: true}); err != nil {
 		log.Errorln(err.Error())
 	}
 

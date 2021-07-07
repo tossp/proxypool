@@ -8,11 +8,12 @@ import (
 	"strings"
 	"time"
 
-	binhtml "github.com/One-Piecs/proxypool/internal/bindata/html"
-	"github.com/One-Piecs/proxypool/log"
+	"github.com/arl/statsviz"
 
 	"github.com/One-Piecs/proxypool/config"
+	binhtml "github.com/One-Piecs/proxypool/internal/bindata/html"
 	appcache "github.com/One-Piecs/proxypool/internal/cache"
+	"github.com/One-Piecs/proxypool/log"
 	"github.com/One-Piecs/proxypool/pkg/provider"
 	"github.com/gin-contrib/cache"
 	"github.com/gin-contrib/cache/persistence"
@@ -29,6 +30,14 @@ func setupRouter() {
 	router = gin.New() // 没有任何中间件的路由
 	store := persistence.NewInMemoryStore(time.Minute)
 	router.Use(gin.Recovery(), cache.SiteCache(store, time.Minute)) // 加上处理panic的中间件，防止遇到panic退出程序
+
+	router.GET("/debug/statsviz/*filepath", func(context *gin.Context) {
+		if context.Param("filepath") == "/ws" {
+			statsviz.Ws(context.Writer, context.Request)
+			return
+		}
+		statsviz.IndexAtRoot("/debug/statsviz").ServeHTTP(context.Writer, context.Request)
+	})
 
 	_ = binhtml.RestoreAssets("", "assets/html") // 恢复静态文件（不恢复问题也不大就是难修改）
 	_ = binhtml.RestoreAssets("", "assets/static")
