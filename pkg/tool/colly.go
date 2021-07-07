@@ -32,15 +32,13 @@ func GetColly() *colly.Collector {
 
 // 配置代理模式
 func ProxyURL() func(*http.Request) (*url.URL, error) {
-	u := http.ProxyFromEnvironment
-	if u != nil {
-		return u
+	if getEnvAny("tg_channel_web_proxy") != "" {
+		fixedURL, err := url.Parse(getEnvAny("tg_channel_web_proxy"))
+		return func(*http.Request) (*url.URL, error) {
+			return fixedURL, err
+		}
 	}
-
-	fixedURL, err := url.Parse(getEnvAny("tg_channel_web_proxy"))
-	return func(*http.Request) (*url.URL, error) {
-		return fixedURL, err
-	}
+	return http.ProxyFromEnvironment
 }
 
 func getEnvAny(names ...string) string {
