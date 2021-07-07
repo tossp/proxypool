@@ -5,6 +5,8 @@ import (
 	_ "net/http/pprof"
 	"os"
 
+	"github.com/google/gops/agent"
+
 	"github.com/One-Piecs/proxypool/pkg/geoIp"
 
 	"github.com/One-Piecs/proxypool/api"
@@ -30,6 +32,11 @@ func main() {
 	if debugMode {
 		log.SetLevel(log.DEBUG)
 	}
+
+	if err := agent.Listen(agent.Options{ShutdownCleanup: true}); err != nil {
+		log.Errorln(err.Error())
+	}
+
 	if configFilePath == "" {
 		configFilePath = os.Getenv("CONFIG_FILE")
 	}
