@@ -6,6 +6,8 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/gammazero/workerpool"
+
 	"github.com/One-Piecs/proxypool/log"
 
 	conf "github.com/One-Piecs/proxypool/config"
@@ -92,17 +94,27 @@ func (g *TGChannelGetter) Get() proxy.ProxyList {
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	items := strings.Split(string(body), "\n")
+
+	var wp = workerpool.New(20)
+	var m sync.Mutex
+
 	for _, s := range items {
-		if strings.Contains(s, "enclosure url") { // get to xml node
-			elements := strings.Split(s, "\"")
-			for _, e := range elements {
-				// add 内部部署 http
-				if strings.Contains(e, "https://") || strings.Contains(e, "http://") {
-					// TODO Webfuzz的可能性比较大，也有可能是订阅链接，为了不拖慢运行速度不写了
-					result = append(result, (&WebFuzz{Url: e}).Get()...)
+		ss := s
+		wp.Submit(func() {
+			if strings.Contains(ss, "enclosure url") { // get to xml node
+				elements := strings.Split(ss, "\"")
+				for _, e := range elements {
+					// add 内部部署 http
+					if strings.Contains(e, "https://") || strings.Contains(e, "http://") {
+						// TODO Webfuzz的可能性比较大，也有可能是订阅链接，为了不拖慢运行速度不写了
+						m.Lock()
+						result = append(result, (&WebFuzz{Url: e}).Get()...)
+						m.Unlock()
+					}
 				}
 			}
-		}
+		})
+		wp.StopWait()
 	}
 	return result
 }

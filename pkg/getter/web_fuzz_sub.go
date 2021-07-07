@@ -5,6 +5,8 @@ import (
 	"regexp"
 	"sync"
 
+	"github.com/gammazero/workerpool"
+
 	"github.com/One-Piecs/proxypool/log"
 
 	"github.com/One-Piecs/proxypool/pkg/proxy"
@@ -32,13 +34,23 @@ func (w *WebFuzzSub) Get() proxy.ProxyList {
 	text := string(body)
 	subUrls := urlRe.FindAllString(text, -1)
 	result := make(proxy.ProxyList, 0)
+
+	var wp = workerpool.New(20)
+	var m sync.Mutex
+
 	for _, url := range subUrls {
-		newResult := (&Subscribe{Url: url}).Get()
-		if len(newResult) == 0 {
-			newResult = (&Clash{Url: url}).Get()
-		}
-		result = result.UniqAppendProxyList(newResult)
+		_url := url
+		wp.Submit(func() {
+			newResult := (&Subscribe{Url: _url}).Get()
+			if len(newResult) == 0 {
+				newResult = (&Clash{Url: _url}).Get()
+			}
+			m.Lock()
+			result = result.UniqAppendProxyList(newResult)
+			m.Unlock()
+		})
 	}
+	wp.StopWait()
 	return result
 }
 
