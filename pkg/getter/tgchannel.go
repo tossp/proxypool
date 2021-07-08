@@ -55,6 +55,7 @@ func NewTGChannelGetter(options tool.Options) (getter Getter, err error) {
 			Url:       "https://t.me/s/" + url,
 			// apiUrl:    "https://tg.i-c-a.su/rss/" + url,
 			apiUrl: conf.Config.TgChannelProxyUrl + url,
+			// apiUrl: conf.Config.TgChannelProxyUrl + url + fmt.Sprintf(`?limit=%d`, t),
 		}, nil
 	}
 	return nil, ErrorUrlNotFound
@@ -107,6 +108,7 @@ func (g *TGChannelGetter) Get() proxy.ProxyList {
 	rssStart := time.Now()
 	wp := workerpool.New(50)
 	m := sync.Mutex{}
+	rssResult := make(proxy.ProxyList, 0)
 
 	for _, s := range items {
 		ss := s
@@ -123,16 +125,20 @@ func (g *TGChannelGetter) Get() proxy.ProxyList {
 						log.Infoln("STATISTIC: TGChannel\tcost=%v\tcount=%d\turl=%s\tsub_url=%s",
 							time.Since(start), len(subResult), g.Url, e)
 						m.Lock()
-						result = append(result, subResult...)
+						rssResult = append(rssResult, subResult...)
 						m.Unlock()
 					}
 				}
 			}
 		})
 	}
-	log.Infoln("STATISTIC: TGChannel\tcost=%v\tcount=%d\turl=%s\tsub_url=%s",
-		time.Since(rssStart), len(result), g.Url, "rss_message")
 	wp.StopWait()
+
+	result = append(result, rssResult...)
+
+	log.Infoln("STATISTIC: TGChannel\tcost=%v\tcount=%d\turl=%s\tsub_url=%s",
+		time.Since(rssStart), len(rssResult), g.Url, "rss_message")
+
 	return result
 }
 
