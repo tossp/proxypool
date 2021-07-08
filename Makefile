@@ -24,7 +24,16 @@ PLATFORM_LIST = \
 all: linux-amd64 darwin-amd64
 
 docker:
-	$(GOBUILD) -o $(BINDIR)/$(NAME)-$@
+	docker run --rm -v `go env GOPATH`:/go \
+		-v "$(shell PWD)":/go/src/$(NAME) \
+		-w /go/src/$(NAME) \
+		-e GOOS="linux" \
+		-e GOARCH="amd64" \
+		golang:1.17-rc-buster \
+		bash -c " \
+	make linux-amd64\
+	"
+	#$(GOBUILD) -o $(BINDIR)/$(NAME)-$@
 
 darwin-amd64:
 	GOARCH=amd64 GOOS=darwin $(GOBUILD) -o $(BINDIR)/$(NAME)-$@
