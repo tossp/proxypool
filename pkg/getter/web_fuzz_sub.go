@@ -47,7 +47,7 @@ func (w *WebFuzzSub) Get() proxy.ProxyList {
 			if len(newResult) == 0 {
 				newResult = (&Clash{Url: _url}).Get()
 			}
-			log.Infoln("STATISTIC: WebFuzzSub\tcost=%v\ncount=%d\turl=%s\tsub_url=%s\n",
+			log.Infoln("STATISTIC: WebFuzzSub\tcost=%v\ncount=%d\turl=%s\tsub_url=%s",
 				time.Since(subStart), len(newResult), w.Url, _url)
 			m.Lock()
 			result = result.UniqAppendProxyList(newResult)
@@ -62,7 +62,7 @@ func (w *WebFuzzSub) Get2ChanWG(pc chan proxy.Proxy, wg *sync.WaitGroup) {
 	defer wg.Done()
 	start := time.Now()
 	nodes := w.Get()
-	log.Infoln("STATISTIC: WebFuzzSub\tcost=%v\tcount=%d\turl=%s\n", time.Since(start), len(nodes), w.Url)
+	log.Infoln("STATISTIC: WebFuzzSub\tcost=%v\tcount=%d\turl=%s", time.Since(start), len(nodes), w.Url)
 	for _, node := range nodes {
 		pc <- node
 	}
@@ -70,7 +70,7 @@ func (w *WebFuzzSub) Get2ChanWG(pc chan proxy.Proxy, wg *sync.WaitGroup) {
 
 func (w *WebFuzzSub) Get2Chan(pc chan proxy.Proxy) {
 	nodes := w.Get()
-	log.Infoln("STATISTIC: WebFuzzSub\tcount=%d\turl=%s\n", len(nodes), w.Url)
+	log.Infoln("STATISTIC: WebFuzzSub\tcount=%d\turl=%s", len(nodes), w.Url)
 	for _, node := range nodes {
 		pc <- node
 	}

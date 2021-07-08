@@ -80,12 +80,20 @@ func (g *TGChannelGetter) Get() proxy.ProxyList {
 		}
 	})
 
+	webStart := time.Now()
 	g.results = make([]string, 0)
 	err := g.c.Visit(g.Url)
 	if err != nil {
 		_ = fmt.Errorf("%s", err.Error())
 	}
+
+	// 等待并发抓取结果
+	g.c.Wait()
+
 	result = append(result, StringArray2ProxyArray(g.results)...)
+
+	log.Infoln("STATISTIC: TGChannel\tcost=%v\tcount=%d\turl=%s\tsub_url=%s",
+		time.Since(webStart), len(result), g.Url, "web_message")
 
 	// 获取文件(api需要维护)
 	resp, err := tool.GetHttpClient().Get(g.apiUrl)
@@ -96,6 +104,7 @@ func (g *TGChannelGetter) Get() proxy.ProxyList {
 	body, err := ioutil.ReadAll(resp.Body)
 	items := strings.Split(string(body), "\n")
 
+	rssStart := time.Now()
 	wp := workerpool.New(50)
 	m := sync.Mutex{}
 
@@ -111,7 +120,7 @@ func (g *TGChannelGetter) Get() proxy.ProxyList {
 						start := time.Now()
 						subResult := (&WebFuzz{Url: e}).Get()
 
-						log.Infoln("STATISTIC: TGChannel\tcost=%v\tcount=%d\turl=%s\tsub_url=%s\n",
+						log.Infoln("STATISTIC: TGChannel\tcost=%v\tcount=%d\turl=%s\tsub_url=%s",
 							time.Since(start), len(subResult), g.Url, e)
 						m.Lock()
 						result = append(result, subResult...)
@@ -121,6 +130,8 @@ func (g *TGChannelGetter) Get() proxy.ProxyList {
 			}
 		})
 	}
+	log.Infoln("STATISTIC: TGChannel\tcost=%v\tcount=%d\turl=%s\tsub_url=%s",
+		time.Since(rssStart), len(result), g.Url, "rss_message")
 	wp.StopWait()
 	return result
 }
@@ -129,14 +140,14 @@ func (g *TGChannelGetter) Get2ChanWG(pc chan proxy.Proxy, wg *sync.WaitGroup) {
 	defer wg.Done()
 	start := time.Now()
 	nodes := g.Get()
-	log.Infoln("STATISTIC: TGChannel\tcost=%v\tcount=%d\turl=%s\n", time.Since(start), len(nodes), g.Url)
+	log.Infoln("STATISTIC: TGChannel\tcost=%v\tcount=%d\turl=%s", time.Since(start), len(nodes), g.Url)
 	for _, node := range nodes {
 		pc <- node
 	}
 }
 func (g *TGChannelGetter) Get2Chan(pc chan proxy.Proxy) {
 	nodes := g.Get()
-	log.Infoln("STATISTIC: TGChannel\tcount=%d\turl=%s\n", len(nodes), g.Url)
+	log.Infoln("STATISTIC: TGChannel\tcount=%d\turl=%s", len(nodes), g.Url)
 	for _, node := range nodes {
 		pc <- node
 	}

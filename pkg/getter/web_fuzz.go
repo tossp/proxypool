@@ -40,7 +40,7 @@ func (w *WebFuzz) Get2ChanWG(pc chan proxy.Proxy, wg *sync.WaitGroup) {
 	defer wg.Done()
 	start := time.Now()
 	nodes := w.Get()
-	log.Infoln("STATISTIC: WebFuzz\tcost=%v\tcount=%d\turl=%s\n", time.Since(start), len(nodes), w.Url)
+	log.Infoln("STATISTIC: WebFuzz\tcost=%v\tcount=%d\turl=%s", time.Since(start), len(nodes), w.Url)
 	for _, node := range nodes {
 		pc <- node
 	}
@@ -48,7 +48,7 @@ func (w *WebFuzz) Get2ChanWG(pc chan proxy.Proxy, wg *sync.WaitGroup) {
 
 func (w *WebFuzz) Get2Chan(pc chan proxy.Proxy) {
 	nodes := w.Get()
-	log.Infoln("STATISTIC: WebFuzz\tcount=%d\turl=%s\n", len(nodes), w.Url)
+	log.Infoln("STATISTIC: WebFuzz\tcount=%d\turl=%s", len(nodes), w.Url)
 	for _, node := range nodes {
 		pc <- node
 	}
