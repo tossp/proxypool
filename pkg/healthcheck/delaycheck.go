@@ -160,15 +160,15 @@ func testDelay(p proxy.Proxy) (delay uint16, err error) {
 	pmap["port"] = int(pmap["port"].(float64))
 	if p.TypeName() == "vmess" {
 		pmap["alterId"] = int(pmap["alterId"].(float64))
-		// if network, ok := pmap["network"]; ok && network.(string) == "h2" {
-		// 	return 0, nil // todo 暂无方法测试h2的延迟，clash对于h2的connection会阻塞  tls.handshake ??
-		// }
+		if network, ok := pmap["network"]; ok && network.(string) == "h2" {
+			return 0, nil // todo 暂无方法测试h2的延迟，clash对于h2的connection会阻塞  tls.handshake ??
+		}
 	}
 
 	// todo 等待 更新 go1.17 tls.handshakeContext
-	// if p.TypeName() == "trojan" && p.BaseInfo().Server == "nl-trojan.bonds.id" {
-	// 	return 0, nil // 此 trojan 节点会阻塞
-	// }
+	if p.TypeName() == "trojan" && p.BaseInfo().Server == "nl-trojan.bonds.id" {
+		return 0, nil // 此 trojan 节点会阻塞
+	}
 
 	clashProxy, err := adapter.ParseProxy(pmap)
 	if err != nil {

@@ -1,6 +1,7 @@
 package tool
 
 import (
+	"crypto/tls"
 	"io"
 	"net/http"
 	"time"
@@ -14,8 +15,21 @@ type HttpClient struct {
 
 var httpClient *HttpClient
 
+var defaultClient = &http.Client{
+	Transport: &http.Transport{
+		TLSClientConfig: &tls.Config{
+			InsecureSkipVerify: true,
+		},
+		MaxIdleConns:        100,
+		MaxConnsPerHost:     500,
+		MaxIdleConnsPerHost: 100,
+		Proxy:               http.ProxyFromEnvironment,
+	},
+}
+
 func init() {
-	httpClient = &HttpClient{http.DefaultClient}
+	// httpClient = &HttpClient{http.DefaultClient}
+	httpClient = &HttpClient{defaultClient}
 	httpClient.Timeout = time.Second * 30
 }
 
