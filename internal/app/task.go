@@ -4,11 +4,12 @@ import (
 	"sync"
 	"time"
 
+	"github.com/One-Piecs/proxypool/pkg/geoIp"
+
 	"github.com/One-Piecs/proxypool/config"
 	"github.com/One-Piecs/proxypool/internal/cache"
 	"github.com/One-Piecs/proxypool/internal/database"
 	"github.com/One-Piecs/proxypool/log"
-	"github.com/One-Piecs/proxypool/pkg/geoIp"
 	"github.com/One-Piecs/proxypool/pkg/healthcheck"
 	"github.com/One-Piecs/proxypool/pkg/provider"
 	"github.com/One-Piecs/proxypool/pkg/proxy"

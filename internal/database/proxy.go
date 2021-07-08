@@ -85,8 +85,9 @@ func GetAllProxies() (proxies proxy.ProxyList) {
 	m := sync.Mutex{}
 
 	for _, proxyDB := range proxiesDB {
+		pDB := proxyDB
 		wp.Submit(func() {
-			p, err := proxy.ParseProxyFromLink(proxyDB.Link)
+			p, err := proxy.ParseProxyFromLink(pDB.Link)
 			if err == nil && p != nil {
 				p.SetUseable(false)
 				m.Lock()

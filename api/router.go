@@ -4,9 +4,12 @@ import (
 	"html/template"
 	"net/http"
 	"os"
+	"runtime"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/One-Piecs/proxypool/internal/app"
 
 	"github.com/arl/statsviz"
 
@@ -309,6 +312,49 @@ func setupRouter() {
 			c.String(500, "id out of range")
 		}
 		c.String(200, proxies[id].Link())
+	})
+
+	router.GET("/task/crawl", func(c *gin.Context) {
+		go func() {
+			err := app.InitConfigAndGetters("")
+			if err != nil {
+				log.Errorln("config parse error: %s", err)
+			}
+			app.CrawlGo()
+			app.Getters = nil
+			runtime.GC()
+		}()
+		c.String(200, "ok")
+	})
+
+	router.GET("/task/speedtest", func(c *gin.Context) {
+		go func() {
+			log.Infoln("Doing speed test task...")
+			err := config.Parse("")
+			if err != nil {
+				log.Errorln("config parse error: %s", err)
+			}
+			pl := appcache.GetProxies("proxies")
+
+			app.SpeedTest(pl)
+			appcache.SetString("clashproxies", provider.Clash{
+				provider.Base{
+					Proxies: &pl,
+				},
+			}.Provide()) // update static string provider
+			appcache.SetString("surgeproxies", provider.Surge{
+				provider.Base{
+					Proxies: &pl,
+				},
+			}.Provide())
+			appcache.SetString("loonproxies", provider.Loon{
+				provider.Base{
+					Proxies: &pl,
+				},
+			}.Provide())
+			runtime.GC()
+		}()
+		c.String(200, "ok")
 	})
 }
 

@@ -4,6 +4,10 @@ import (
 	"fmt"
 	"sort"
 	"strings"
+
+	"github.com/One-Piecs/proxypool/pkg/geoIp"
+
+	"github.com/gammazero/workerpool"
 )
 
 type ProxyList []Proxy
@@ -104,6 +108,22 @@ func (ps ProxyList) NameClear() ProxyList {
 
 func (ps ProxyList) NameAddCountry() ProxyList {
 	num := len(ps)
+
+	wp := workerpool.New(100)
+	for i := 0; i < num; i++ {
+		// if ps[i].BaseInfo().Country == "" {
+		pp := ps[i]
+		wp.Submit(func() {
+			_, country, err := geoIp.GeoIpDB.Find(pp.BaseInfo().Server) // IP库不准
+			if err != nil {
+				country = "🏁 ZZ"
+			}
+			pp.SetCountry(country)
+		})
+		// }
+	}
+	wp.StopWait()
+
 	for i := 0; i < num; i++ {
 		ps[i].SetName(ps[i].BaseInfo().Name + ps[i].BaseInfo().Country)
 	}
