@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/gammazero/workerpool"
 
@@ -107,10 +108,11 @@ func (g *TGChannelGetter) Get() proxy.ProxyList {
 					// add 内部部署 http
 					if strings.Contains(e, "https://") || strings.Contains(e, "http://") {
 						// TODO Webfuzz的可能性比较大，也有可能是订阅链接，为了不拖慢运行速度不写了
+						start := time.Now()
 						subResult := (&WebFuzz{Url: e}).Get()
 
-						log.Infoln("STATISTIC: TGChannel\tcount=%d\turl=%s\tsub_url=%s\n",
-							len(subResult), g.Url, e)
+						log.Infoln("STATISTIC: TGChannel\tcost=%v\tcount=%d\turl=%s\tsub_url=%s\n",
+							time.Since(start), len(subResult), g.Url, e)
 						m.Lock()
 						result = append(result, subResult...)
 						m.Unlock()
@@ -125,8 +127,9 @@ func (g *TGChannelGetter) Get() proxy.ProxyList {
 
 func (g *TGChannelGetter) Get2ChanWG(pc chan proxy.Proxy, wg *sync.WaitGroup) {
 	defer wg.Done()
+	start := time.Now()
 	nodes := g.Get()
-	log.Infoln("STATISTIC: TGChannel\tcount=%d\turl=%s\n", len(nodes), g.Url)
+	log.Infoln("STATISTIC: TGChannel\tcost=%v\tcount=%d\turl=%s\n", time.Since(start), len(nodes), g.Url)
 	for _, node := range nodes {
 		pc <- node
 	}

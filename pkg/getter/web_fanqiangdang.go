@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/One-Piecs/proxypool/log"
 
@@ -82,8 +83,9 @@ func (w *WebFanqiangdang) Get() proxy.ProxyList {
 
 func (w *WebFanqiangdang) Get2ChanWG(pc chan proxy.Proxy, wg *sync.WaitGroup) {
 	defer wg.Done()
+	start := time.Now()
 	nodes := w.Get()
-	log.Infoln("STATISTIC: Fanqiangdang\tcount=%d\turl=%s\n", len(nodes), w.Url)
+	log.Infoln("STATISTIC: Fanqiangdang\tcost=%v\tcount=%d\turl=%s\n", time.Since(start), len(nodes), w.Url)
 	for _, node := range nodes {
 		pc <- node
 	}

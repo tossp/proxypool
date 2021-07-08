@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"regexp"
 	"sync"
+	"time"
 
 	"github.com/gammazero/workerpool"
 
@@ -41,12 +42,13 @@ func (w *WebFuzzSub) Get() proxy.ProxyList {
 	for _, url := range subUrls {
 		_url := url
 		wp.Submit(func() {
+			subStart := time.Now()
 			newResult := (&Subscribe{Url: _url}).Get()
 			if len(newResult) == 0 {
 				newResult = (&Clash{Url: _url}).Get()
 			}
-			log.Infoln("STATISTIC: WebFuzzSub\tcount=%d\turl=%s\tsub_url=%s\n",
-				len(newResult), w.Url, _url)
+			log.Infoln("STATISTIC: WebFuzzSub\tcost=%v\ncount=%d\turl=%s\tsub_url=%s\n",
+				time.Since(subStart), len(newResult), w.Url, _url)
 			m.Lock()
 			result = result.UniqAppendProxyList(newResult)
 			m.Unlock()
@@ -58,8 +60,9 @@ func (w *WebFuzzSub) Get() proxy.ProxyList {
 
 func (w *WebFuzzSub) Get2ChanWG(pc chan proxy.Proxy, wg *sync.WaitGroup) {
 	defer wg.Done()
+	start := time.Now()
 	nodes := w.Get()
-	log.Infoln("STATISTIC: WebFuzzSub\tcount=%d\turl=%s\n", len(nodes), w.Url)
+	log.Infoln("STATISTIC: WebFuzzSub\tcost=%v\tcount=%d\turl=%s\n", time.Since(start), len(nodes), w.Url)
 	for _, node := range nodes {
 		pc <- node
 	}
