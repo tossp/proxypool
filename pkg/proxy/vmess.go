@@ -59,6 +59,14 @@ func (v Vmess) String() string {
 }
 
 func (v Vmess) ToClash() string {
+	{
+		vvList := strings.Split(v.ServerName, ",")
+		v.ServerName = vvList[0] // 只取第一个
+		for k, vv := range v.WSHeaders {
+			vvList := strings.Split(vv, ",")
+			v.WSHeaders[k] = vvList[0] // 只取第一个
+		}
+	}
 	data, err := json.Marshal(v)
 	if err != nil {
 		return ""
@@ -115,6 +123,12 @@ func (v Vmess) ToLoon() string {
 			text += fmt.Sprintf(", skip-cert-verify:%v", v.SkipCertVerify)
 		}
 		if v.WSHeaders["HOST"] != "" {
+			// loon host v 多组分割要注意 ':'  ','
+			vv := strings.ReplaceAll(v.WSHeaders["HOST"], "http://", "")
+			vv = strings.ReplaceAll(vv, "https://", "")
+			vvList := strings.Split(vv, ",")
+			v.WSHeaders["HOST"] = vvList[0] // 只取第一个
+
 			text += ", host:" + v.WSHeaders["HOST"]
 		}
 		return text
