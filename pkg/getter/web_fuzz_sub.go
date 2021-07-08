@@ -47,7 +47,7 @@ func (w *WebFuzzSub) Get() proxy.ProxyList {
 			if len(newResult) == 0 {
 				newResult = (&Clash{Url: _url}).Get()
 			}
-			log.Infoln("STATISTIC: WebFuzzSub\tcost=%v\ncount=%d\turl=%s\tsub_url=%s",
+			log.Infoln("STATISTIC: WebFuzzSub\tcost=%v\tcount=%d\turl=%s\tsub_url=%s",
 				time.Since(subStart), len(newResult), w.Url, _url)
 			m.Lock()
 			result = result.UniqAppendProxyList(newResult)

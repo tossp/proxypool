@@ -28,6 +28,7 @@ type TGChannelGetter struct {
 	results   []string
 	Url       string
 	apiUrl    string
+	onlyFile  bool
 }
 
 func NewTGChannelGetter(options tool.Options) (getter Getter, err error) {
@@ -43,12 +44,20 @@ func NewTGChannelGetter(options tool.Options) (getter Getter, err error) {
 	if !found || t <= 0 {
 		t = 200
 	}
+
 	urlInterface, found := options["channel"]
 	if found {
 		url, err := AssertTypeStringNotNull(urlInterface)
 		if err != nil {
 			return nil, err
 		}
+
+		var only_file bool
+		flag, found := options["only_file"]
+		if found {
+			only_file = flag.(bool)
+		}
+
 		return &TGChannelGetter{
 			c:         tool.GetColly(),
 			NumNeeded: t,
@@ -56,6 +65,7 @@ func NewTGChannelGetter(options tool.Options) (getter Getter, err error) {
 			// apiUrl:    "https://tg.i-c-a.su/rss/" + url,
 			apiUrl: conf.Config.TgChannelProxyUrl + url,
 			// apiUrl: conf.Config.TgChannelProxyUrl + url + fmt.Sprintf(`?limit=%d`, t),
+			onlyFile: only_file,
 		}, nil
 	}
 	return nil, ErrorUrlNotFound
@@ -63,39 +73,40 @@ func NewTGChannelGetter(options tool.Options) (getter Getter, err error) {
 
 func (g *TGChannelGetter) Get() proxy.ProxyList {
 	result := make(proxy.ProxyList, 0)
-	g.results = make([]string, 0)
-	// 找到所有的文字消息
-	g.c.OnHTML("div.tgme_widget_message_text", func(e *colly.HTMLElement) {
-		g.results = append(g.results, GrepLinksFromString(e.Text)...)
-		// 抓取到http链接，有可能是订阅链接或其他链接，无论如何试一下
-		subUrls := urlRe.FindAllString(e.Text, -1)
-		for _, url := range subUrls {
-			result = append(result, (&Subscribe{Url: url}).Get()...)
-		}
-	})
+	if !g.onlyFile {
+		g.results = make([]string, 0)
+		// 找到所有的文字消息
+		g.c.OnHTML("div.tgme_widget_message_text", func(e *colly.HTMLElement) {
+			g.results = append(g.results, GrepLinksFromString(e.Text)...)
+			// 抓取到http链接，有可能是订阅链接或其他链接，无论如何试一下
+			subUrls := urlRe.FindAllString(e.Text, -1)
+			for _, url := range subUrls {
+				result = append(result, (&Subscribe{Url: url}).Get()...)
+			}
+		})
 
-	// 找到之前消息页面的链接，加入访问队列
-	g.c.OnHTML("link[rel=prev]", func(e *colly.HTMLElement) {
-		if len(g.results) < g.NumNeeded {
-			_ = e.Request.Visit(e.Attr("href"))
-		}
-	})
+		// 找到之前消息页面的链接，加入访问队列
+		g.c.OnHTML("link[rel=prev]", func(e *colly.HTMLElement) {
+			if len(g.results) < g.NumNeeded {
+				_ = e.Request.Visit(e.Attr("href"))
+			}
+		})
 
-	webStart := time.Now()
-	g.results = make([]string, 0)
-	err := g.c.Visit(g.Url)
-	if err != nil {
-		_ = fmt.Errorf("%s", err.Error())
+		webStart := time.Now()
+		g.results = make([]string, 0)
+		err := g.c.Visit(g.Url)
+		if err != nil {
+			_ = fmt.Errorf("%s", err.Error())
+		}
+
+		// 等待并发抓取结果
+		g.c.Wait()
+
+		result = append(result, StringArray2ProxyArray(g.results)...)
+
+		log.Infoln("STATISTIC: TGChannel\tcost=%v\tcount=%d\turl=%s\tsub_url=%s",
+			time.Since(webStart), len(result), g.Url, "web_message")
 	}
-
-	// 等待并发抓取结果
-	g.c.Wait()
-
-	result = append(result, StringArray2ProxyArray(g.results)...)
-
-	log.Infoln("STATISTIC: TGChannel\tcost=%v\tcount=%d\turl=%s\tsub_url=%s",
-		time.Since(webStart), len(result), g.Url, "web_message")
-
 	// 获取文件(api需要维护)
 	resp, err := tool.GetHttpClient().Get(g.apiUrl)
 	if err != nil {
