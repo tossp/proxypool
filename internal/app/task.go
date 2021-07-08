@@ -29,10 +29,10 @@ func CrawlGo() {
 	if proxies == nil && dbProxies != nil {
 		cache.SetProxies("proxies", dbProxies)
 		cache.LastCrawlTime = "抓取中，已载入上次数据库数据"
-		log.Infoln("Database: loaded")
+		log.Infoln("Database loaded count: %d", len(dbProxies))
 	}
 	if dbProxies != nil {
-		proxies = dbProxies.UniqAppendProxyList(proxies)
+		proxies = dbProxies.UniqAppendProxyList2(proxies)
 	}
 	if proxies == nil {
 		proxies = make(proxy.ProxyList, 0)
@@ -42,12 +42,15 @@ func CrawlGo() {
 		wg.Wait()
 		close(pc)
 	}() // Note: 为何并发？可以一边抓取一边读取而非抓完再读
-	// for 用于阻塞goroutine
+
+	// 接收新增 proxy, 去重
+	mp := proxies.ToProxyMap()
 	for p := range pc { // Note: pc关闭后不能发送数据可以读取剩余数据
 		if p != nil {
-			proxies = proxies.UniqAppendProxy(p)
+			mp.UniqAppendProxy(p)
 		}
 	}
+	proxies = mp.ToProxyList()
 
 	// proxies.NameClear()
 	proxies = proxies.Derive()

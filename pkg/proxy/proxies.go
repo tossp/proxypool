@@ -8,6 +8,34 @@ import (
 
 type ProxyList []Proxy
 
+type ProxyMap map[string]Proxy
+
+func (mp ProxyMap) UniqAppendProxy(p Proxy) {
+	if p != nil {
+		mp[p.Identifier()] = p
+	}
+}
+
+func (mp ProxyMap) ToProxyList() ProxyList {
+	ps := make(ProxyList, 0)
+	for _, p := range mp {
+		if p != nil {
+			ps = append(ps, p)
+		}
+	}
+	return ps
+}
+
+func (ps ProxyList) ToProxyMap() ProxyMap {
+	m := make(map[string]Proxy, len(ps))
+	for _, p := range ps {
+		if p != nil {
+			m[p.Identifier()] = p
+		}
+	}
+	return m
+}
+
 // sort排序使用
 func (ps ProxyList) Len() int {
 	return len(ps)
@@ -157,6 +185,23 @@ func (ps *ProxyList) UniqAppendProxyList(new ProxyList) ProxyList {
 			}
 		}
 		if !isExist {
+			*ps = append(*ps, p)
+		}
+	}
+	return *ps
+}
+
+func (ps *ProxyList) UniqAppendProxyList2(new ProxyList) ProxyList {
+	if len(new) == 0 {
+		return *ps
+	}
+	if len(*ps) == 0 {
+		return new
+	}
+
+	mp := (*ps).ToProxyMap()
+	for _, p := range new {
+		if _, isExist := mp[p.Identifier()]; !isExist {
 			*ps = append(*ps, p)
 		}
 	}

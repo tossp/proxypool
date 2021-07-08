@@ -32,18 +32,17 @@ func (c Clash) Provide() string {
 	resultBuilder.WriteString("proxies:\n")
 	for _, p := range *c.Proxies {
 		if checkClashSupport(p) {
-			// resultBuilder.WriteString(p.ToClash() + "\n")
-			e := p.ToClash()
-			e = strings.ReplaceAll(e, `"`, "")
-			e = strings.ReplaceAll(e, `:`, ": ")
-			e = strings.ReplaceAll(e, `,`, ", ")
-
-			resultBuilder.WriteString(strings.ReplaceAll(e, `"`, "") + "\n")
+			resultBuilder.WriteString(p.ToClash() + "\n")
+			// e := p.ToClash()
+			// e = strings.ReplaceAll(e, `"`, "")
+			// e = strings.ReplaceAll(e, `:`, ": ")
+			// e = strings.ReplaceAll(e, `,`, ", ")
+			// resultBuilder.WriteString(strings.ReplaceAll(e, `"`, "") + "\n")
 		}
 	}
 	if resultBuilder.Len() == 9 { //如果没有proxy，添加无效的NULL节点，防止Clash对空节点的Provider报错
-		// resultBuilder.WriteString("- {\"name\":\"NULL\",\"server\":\"NULL\",\"port\":11708,\"type\":\"ssr\",\"country\":\"NULL\",\"password\":\"sEscPBiAD9K$\\u0026@79\",\"cipher\":\"aes-256-cfb\",\"protocol\":\"origin\",\"protocol_param\":\"NULL\",\"obfs\":\"http_simple\"}")
-		resultBuilder.WriteString("- {name:NULL, server:NULL, port:11708, type:ssr, country:NULL, password:sEscPBiAD9K, cipher:aes-256-cfb, protocol:origin, protocol_param:NULL, obfs:http_simple}")
+		resultBuilder.WriteString("- {\"name\":\"NULL\",\"server\":\"NULL\",\"port\":11708,\"type\":\"ssr\",\"country\":\"NULL\",\"password\":\"sEscPBiAD9K$\\u0026@79\",\"cipher\":\"aes-256-cfb\",\"protocol\":\"origin\",\"protocol_param\":\"NULL\",\"obfs\":\"http_simple\"}")
+		// resultBuilder.WriteString("- {name:NULL, server:NULL, port:11708, type:ssr, country:NULL, password:sEscPBiAD9K, cipher:aes-256-cfb, protocol:origin, protocol_param:NULL, obfs:http_simple}")
 	}
 	return resultBuilder.String()
 }
