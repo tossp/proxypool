@@ -30,7 +30,7 @@ func InitGeoIpDB() error {
 			panic(err)
 			return err
 		}
-		GeoIpDB = NewGeoIP("assets/GeoLite2-City.mmdb", "assets/flags.json")
+		// GeoIpDB = NewGeoIP("assets/GeoLite2-City.mmdb", "assets/flags.json")
 	}
 	GeoIpDB = NewGeoIP("assets/GeoLite2-City.mmdb", "assets/flags.json")
 	return nil

@@ -1,7 +1,10 @@
 package database
 
 import (
+	"sync"
 	"time"
+
+	"github.com/gammazero/workerpool"
 
 	"github.com/One-Piecs/proxypool/log"
 	"github.com/One-Piecs/proxypool/pkg/proxy"
@@ -78,15 +81,21 @@ func GetAllProxies() (proxies proxy.ProxyList) {
 	proxiesDB := make([]Proxy, 0)
 	DB.Select("link").Find(&proxiesDB)
 
+	wp := workerpool.New(100)
+	m := sync.Mutex{}
+
 	for _, proxyDB := range proxiesDB {
-		if proxiesDB != nil {
+		wp.Submit(func() {
 			p, err := proxy.ParseProxyFromLink(proxyDB.Link)
 			if err == nil && p != nil {
 				p.SetUseable(false)
+				m.Lock()
 				proxies = append(proxies, p)
+				m.Unlock()
 			}
-		}
+		})
 	}
+	wp.StopWait()
 	return
 }
 
