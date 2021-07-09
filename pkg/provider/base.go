@@ -126,7 +126,7 @@ func (b *Base) preFilter() {
 					}
 					// check speed
 					if ps.Speed > speedMin && ps.Speed < speedMax {
-						p.AddToName(fmt.Sprintf(" |%5.2fMb", ps.Speed))
+						p.AddToName(fmt.Sprintf(" |%6.2fMb", ps.Speed))
 					} else {
 						goto exclude
 					}

@@ -219,7 +219,13 @@ func (ps *ProxyList) UniqAppendProxyList2(new ProxyList) ProxyList {
 		return new
 	}
 
-	mp := (*ps).ToProxyMap()
+	mp := make(map[string]struct{}, len(*ps))
+	for _, p := range *ps {
+		if p != nil {
+			mp[p.Identifier()] = struct{}{}
+		}
+	}
+
 	for _, p := range new {
 		if _, isExist := mp[p.Identifier()]; !isExist {
 			*ps = append(*ps, p)

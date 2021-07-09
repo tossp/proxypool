@@ -58,7 +58,7 @@ func SaveProxyList(pl proxy.ProxyList) {
 			if err := DB.Create(&p).Error; err != nil {
 				// Update with Identifier
 				if uperr := DB.Model(&Proxy{}).Where("identifier = ?", p.Identifier).Updates(&Proxy{
-					Base: proxy.Base{Useable: true, Name: p.Name},
+					Base: proxy.Base{Useable: true, Name: p.Name, Country: p.Country},
 				}).Error; uperr != nil {
 					log.Warnln("\n\t\tdatabase: Update failed:"+
 						"\n\t\tdatabase: When Created item: %s"+
