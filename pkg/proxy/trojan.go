@@ -56,7 +56,7 @@ func (t Trojan) ToClash() string {
 	if err != nil {
 		return ""
 	}
-	return "- " + string(data)
+	return "  - " + string(data)
 }
 
 func (t Trojan) ToSurge() string {

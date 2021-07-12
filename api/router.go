@@ -20,6 +20,7 @@ import (
 	"github.com/One-Piecs/proxypool/pkg/provider"
 	"github.com/gin-contrib/cache"
 	"github.com/gin-contrib/cache/persistence"
+	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 	_ "github.com/heroku/x/hmetrics/onload"
 )
@@ -34,6 +35,7 @@ func setupRouter() {
 	store := persistence.NewInMemoryStore(time.Minute)
 	router.Use(gin.Recovery(), cache.SiteCache(store, time.Minute)) // 加上处理panic的中间件，防止遇到panic退出程序
 
+	pprof.Register(router)
 	router.GET("/debug/statsviz/*filepath", func(context *gin.Context) {
 		if context.Param("filepath") == "/ws" {
 			statsviz.Ws(context.Writer, context.Request)

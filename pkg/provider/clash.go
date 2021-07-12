@@ -41,8 +41,7 @@ func (c Clash) Provide() string {
 		}
 	}
 	if resultBuilder.Len() == 9 { //如果没有proxy，添加无效的NULL节点，防止Clash对空节点的Provider报错
-		resultBuilder.WriteString("- {\"name\":\"NULL\",\"server\":\"NULL\",\"port\":11708,\"type\":\"ssr\",\"country\":\"NULL\",\"password\":\"sEscPBiAD9K$\\u0026@79\",\"cipher\":\"aes-256-cfb\",\"protocol\":\"origin\",\"protocol_param\":\"NULL\",\"obfs\":\"http_simple\"}")
-		// resultBuilder.WriteString("- {name:NULL, server:NULL, port:11708, type:ssr, country:NULL, password:sEscPBiAD9K, cipher:aes-256-cfb, protocol:origin, protocol_param:NULL, obfs:http_simple}")
+		resultBuilder.WriteString("  - {\"name\":\"NULL\",\"server\":\"NULL\",\"port\":11708,\"type\":\"ssr\",\"country\":\"NULL\",\"password\":\"sEscPBiAD9K$\\u0026@79\",\"cipher\":\"aes-256-cfb\",\"protocol\":\"origin\",\"protocol_param\":\"NULL\",\"obfs\":\"http_simple\"}")
 	}
 	return resultBuilder.String()
 }

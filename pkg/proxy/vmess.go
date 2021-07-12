@@ -71,7 +71,7 @@ func (v Vmess) ToClash() string {
 	if err != nil {
 		return ""
 	}
-	return "- " + string(data)
+	return "  - " + string(data)
 }
 
 func (v Vmess) ToSurge() string {

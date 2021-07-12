@@ -129,9 +129,14 @@ func (g *TGChannelGetter) Get() proxy.ProxyList {
 				for _, e := range elements {
 					// add 内部部署 http
 					if strings.Contains(e, "https://") || strings.Contains(e, "http://") {
-						// TODO Webfuzz的可能性比较大，也有可能是订阅链接，为了不拖慢运行速度不写了
 						start := time.Now()
-						subResult := (&WebFuzz{Url: e}).Get()
+						subResult := make(proxy.ProxyList, 0)
+						if strings.Contains(e, "yaml") || strings.Contains(e, "yml") {
+							subResult = append(subResult, (&Clash{Url: e}).Get()...)
+						} else {
+							subResult = append(subResult, (&WebFuzz{Url: e}).Get()...)
+							subResult = append(subResult, (&Subscribe{Url: e}).Get()...)
+						}
 
 						log.Infoln("STATISTIC: TGChannel\tcost=%v\tcount=%d\turl=%s\tsub_url=%s",
 							time.Since(start), len(subResult), g.Url, e)

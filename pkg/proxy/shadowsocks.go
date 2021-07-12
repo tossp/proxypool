@@ -46,7 +46,7 @@ func (ss Shadowsocks) ToClash() string {
 	if err != nil {
 		return ""
 	}
-	return "- " + string(data)
+	return "  - " + string(data)
 }
 
 // ToSurge converts proxy to surge proxy string
