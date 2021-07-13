@@ -1,6 +1,7 @@
 package app
 
 import (
+	"fmt"
 	"sync"
 	"time"
 
@@ -123,8 +124,15 @@ func CrawlGo() {
 				_, c, e := geoIp.GeoIpDB.Find(s.OutIp)
 				if e == nil {
 					// proxies[i].SetName(fmt.Sprintf("Relay_%s-%s", proxies[i].BaseInfo().Name, c))
-					proxies[i].SetCountry(c)
-					proxies[i].SetName(c)
+
+					if proxies[i].BaseInfo().Name == "🇨🇳 CN" {
+						proxies[i].SetCountry(fmt.Sprintf("%s-%s", proxies[i].BaseInfo().Name, c))
+						proxies[i].SetName(fmt.Sprintf("Relay_%s-%s", proxies[i].BaseInfo().Name, c))
+					} else {
+						proxies[i].SetCountry(c)
+						proxies[i].SetName(c)
+					}
+
 				}
 			} else if s.Pool == true {
 				// proxies[i].SetName(fmt.Sprintf("Pool_%s", proxies[i].BaseInfo().Name))
