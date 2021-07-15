@@ -126,8 +126,11 @@ func CrawlGo() {
 					// proxies[i].SetName(fmt.Sprintf("Relay_%s-%s", proxies[i].BaseInfo().Name, c))
 
 					if proxies[i].BaseInfo().Name == "🇨🇳 CN" {
-						proxies[i].SetCountry(fmt.Sprintf("%s-%s", proxies[i].BaseInfo().Name, c))
-						proxies[i].SetName(fmt.Sprintf("Relay_%s-%s", proxies[i].BaseInfo().Name, c))
+						// proxies[i].SetCountry(fmt.Sprintf("%s-%s", proxies[i].BaseInfo().Name, c))
+						// proxies[i].SetName(fmt.Sprintf("Relay_%s-%s", proxies[i].BaseInfo().Name, c))
+
+						proxies[i].SetCountry(fmt.Sprintf("%s", c))
+						proxies[i].SetName(fmt.Sprintf("Relay %s", proxies[i].BaseInfo().Name, c))
 					} else {
 						proxies[i].SetCountry(c)
 						proxies[i].SetName(c)
