@@ -44,8 +44,8 @@ func setupRouter() {
 		statsviz.IndexAtRoot("/debug/statsviz").ServeHTTP(context.Writer, context.Request)
 	})
 
-	_ = binhtml.RestoreAssets("", "assets/html") // 恢复静态文件（不恢复问题也不大就是难修改）
-	_ = binhtml.RestoreAssets("", "assets/static")
+	// _ = binhtml.RestoreAssets("", "assets/html") // 恢复静态文件（不恢复问题也不大就是难修改）
+	// _ = binhtml.RestoreAssets("", "assets/static")
 
 	temp, err := loadHTMLTemplate() // 加载html模板，模板源存放于html.go中的类似_assetsHtmlSurgeHtml的变量
 	if err != nil {
@@ -57,17 +57,21 @@ func setupRouter() {
 
 	router.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "assets/html/index.html", gin.H{
-			"domain":               config.Config.Domain,
-			"getters_count":        appcache.GettersCount,
-			"all_proxies_count":    appcache.AllProxiesCount,
-			"ss_proxies_count":     appcache.SSProxiesCount,
-			"ssr_proxies_count":    appcache.SSRProxiesCount,
-			"vmess_proxies_count":  appcache.VmessProxiesCount,
-			"trojan_proxies_count": appcache.TrojanProxiesCount,
-			"useful_proxies_count": appcache.UsefullProxiesCount,
-			"last_crawl_time":      appcache.LastCrawlTime,
-			"is_speed_test":        appcache.IsSpeedTest,
-			"version":              version,
+			"domain":                      config.Config.Domain,
+			"getters_count":               appcache.GettersCount,
+			"all_proxies_count":           appcache.AllProxiesCount,
+			"ss_proxies_count":            appcache.SSProxiesCount,
+			"ssr_proxies_count":           appcache.SSRProxiesCount,
+			"vmess_proxies_count":         appcache.VmessProxiesCount,
+			"trojan_proxies_count":        appcache.TrojanProxiesCount,
+			"useful_proxies_count":        appcache.UsefullProxiesCount,
+			"useful_ss_proxies_count":     appcache.UsefullSSProxiesCount,
+			"useful_ssr_proxies_count":    appcache.UsefullSSRProxiesCount,
+			"useful_vmess_proxies_count":  appcache.UsefullVmessProxiesCount,
+			"useful_trojan_proxies_count": appcache.UsefullTrojanProxiesCount,
+			"last_crawl_time":             appcache.LastCrawlTime,
+			"is_speed_test":               appcache.IsSpeedTest,
+			"version":                     version,
 		})
 	})
 
@@ -389,7 +393,7 @@ func loadHTMLTemplate() (t *template.Template, err error) {
 		if strings.Contains(fileName, "css") {
 			continue
 		}
-		data := binhtml.MustAsset(fileName)          //读取页面数据
+		data, _ := binhtml.Asset(fileName)           //读取页面数据
 		t, err = t.New(fileName).Parse(string(data)) //生成带路径名称的模板
 		if err != nil {
 			return nil, err

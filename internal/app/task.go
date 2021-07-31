@@ -148,6 +148,10 @@ func CrawlGo() {
 	// 可用节点存储
 	cache.SetProxies("proxies", proxies)
 	cache.UsefullProxiesCount = proxies.Len()
+	cache.UsefullSSRProxiesCount = proxies.TypeLen("ssr")
+	cache.UsefullSSProxiesCount = proxies.TypeLen("ss")
+	cache.UsefullVmessProxiesCount = proxies.TypeLen("vmess")
+	cache.UsefullTrojanProxiesCount = proxies.TypeLen("trojan")
 	database.SaveProxyList(proxies)
 	database.ClearOldItems()
 
