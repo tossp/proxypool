@@ -2,7 +2,7 @@
 
 module github.com/One-Piecs/proxypool
 
-go 1.16
+go 1.17
 
 require (
 	github.com/Dreamacro/clash v1.6.5
@@ -46,4 +46,43 @@ require (
 	gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c
 	gorm.io/driver/postgres v1.0.5
 	gorm.io/gorm v1.20.7
+)
+
+require (
+	github.com/Dreamacro/go-shadowsocks2 v0.1.7 // indirect
+	github.com/bradfitz/gomemcache v0.0.0-20180710155616-bc664df96737 // indirect
+	github.com/gammazero/deque v0.1.0 // indirect
+	github.com/gin-contrib/sse v0.1.0 // indirect
+	github.com/go-playground/locales v0.13.0 // indirect
+	github.com/go-playground/universal-translator v0.17.0 // indirect
+	github.com/gofrs/uuid v4.0.0+incompatible // indirect
+	github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e // indirect
+	github.com/gomodule/redigo v2.0.0+incompatible // indirect
+	github.com/gorilla/websocket v1.4.2 // indirect
+	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
+	github.com/jackc/pgconn v1.7.0 // indirect
+	github.com/jackc/pgio v1.0.0 // indirect
+	github.com/jackc/pgpassfile v1.0.0 // indirect
+	github.com/jackc/pgproto3/v2 v2.0.5 // indirect
+	github.com/jackc/pgservicefile v0.0.0-20200714003250-2b9c44734f2b // indirect
+	github.com/jackc/pgtype v1.5.0 // indirect
+	github.com/jackc/pgx/v4 v4.9.0 // indirect
+	github.com/jinzhu/inflection v1.0.0 // indirect
+	github.com/jinzhu/now v1.1.1 // indirect
+	github.com/leodido/go-urn v1.2.0 // indirect
+	github.com/mattn/go-colorable v0.1.6 // indirect
+	github.com/mattn/go-isatty v0.0.12 // indirect
+	github.com/memcachier/mc v2.0.1+incompatible // indirect
+	github.com/oschwald/maxminddb-golang v1.8.0 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
+	github.com/robfig/go-cache v0.0.0-20130306151617-9fc39e0dbf62 // indirect
+	github.com/ugorji/go/codec v1.1.7 // indirect
+	go.uber.org/atomic v1.8.0 // indirect
+	golang.org/x/crypto v0.0.0-20210616213533-5ff15b29337e // indirect
+	golang.org/x/net v0.0.0-20210614182718-04defd469f4e // indirect
+	golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c // indirect
+	golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1 // indirect
+	golang.org/x/text v0.3.6 // indirect
+	golang.org/x/time v0.0.0-20200630173020-3af7569d3a1e // indirect
+	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
