@@ -29,7 +29,7 @@ docker:
 		-w /go/src/$(NAME) \
 		-e GOOS="linux" \
 		-e GOARCH="amd64" \
-		golang:1.17-rc-buster \
+		golang:1.17 \
 		bash -c " \
 	make linux-amd64\
 	"
