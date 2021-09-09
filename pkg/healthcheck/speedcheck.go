@@ -236,12 +236,18 @@ func SpeedTestNewWithWorkpool(proxies []proxy.Proxy, conns int) {
 // ProxySpeedTest returns a speed result of a proxy. The speed result is like 20Mbit/s. -1 for error.
 func ProxySpeedTest(p proxy.Proxy) (speedResult float64, err error) {
 	// 增加测速国家白名单
+	countryOk := false
 	countries := strings.Split(config.Config.SpeedCountryWhiteList, ",")
 	for _, c := range countries {
-		if !strings.Contains(p.BaseInfo().Name, c) {
-			return 0, nil
+		if strings.Contains(p.BaseInfo().Name, c) {
+			countryOk = true
+			break
 		}
-		break
+	}
+
+	if !countryOk {
+		// 不在白名单内
+		return 0, nil
 	}
 
 	// convert to clash proxy struct
