@@ -65,6 +65,12 @@ func (v Vmess) ToClash() string {
 		for k, vv := range v.WSHeaders {
 			vvList := strings.Split(vv, ",")
 			v.WSHeaders[k] = vvList[0] // 只取第一个
+
+			// 去除 ‘/’ 保留域名
+			if k == "host" || k == "HOST" {
+				vvList = strings.Split(vvList[0], "/")
+				v.WSHeaders[k] = vvList[0]
+			}
 		}
 	}
 	data, err := json.Marshal(v)
@@ -85,6 +91,12 @@ func (v Vmess) ToSurge() string {
 			v = strings.ReplaceAll(v, "https://", "")
 			vv := strings.Split(v, ",")
 			v = vv[0] // 只取第一个
+
+			// 去除 ‘/’ 保留域名
+			if k == "host" || k == "HOST" {
+				vv = strings.Split(v, "/")
+				v = vv[0]
+			}
 
 			if wsHeasers == "" {
 				wsHeasers = k + ":" + v
@@ -128,6 +140,10 @@ func (v Vmess) ToLoon() string {
 			vv = strings.ReplaceAll(vv, "https://", "")
 			vvList := strings.Split(vv, ",")
 			v.WSHeaders["HOST"] = vvList[0] // 只取第一个
+
+			// 去除 ‘/’ 保留域名
+			vvList = strings.Split(v.WSHeaders["HOST"], "/")
+			v.WSHeaders["HOST"] = vvList[0]
 
 			text += ", host:" + v.WSHeaders["HOST"]
 		}
