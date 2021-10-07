@@ -21,7 +21,7 @@ PLATFORM_LIST = \
 	freebsd-amd64
 
 
-all: linux-amd64 darwin-amd64
+all: linux-amd64 darwin-amd64 linux-armv8
 
 docker:
 	docker run --rm -v `go env GOPATH`:/go \

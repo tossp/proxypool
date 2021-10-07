@@ -83,7 +83,6 @@ func RelayCheckWorkpool(proxies proxy.ProxyList) {
 		pool.Submit(func() {
 			out, err := testRelay(pp)
 			if err == nil && out != "" {
-				m.Lock()
 				// Relay or pool
 				if isRelay(pp.BaseInfo().Server, out) {
 					if ps, ok := ProxyStats.Find(pp); ok {
@@ -95,7 +94,9 @@ func RelayCheckWorkpool(proxies proxy.ProxyList) {
 							Relay: true,
 							OutIp: out,
 						}
+						m.Lock()
 						ProxyStats = append(ProxyStats, *ps)
+						m.Unlock()
 					}
 				} else { // is pool ip
 					if ps, ok := ProxyStats.Find(pp); ok {
@@ -107,10 +108,11 @@ func RelayCheckWorkpool(proxies proxy.ProxyList) {
 							Pool:  true,
 							OutIp: out,
 						}
+						m.Lock()
 						ProxyStats = append(ProxyStats, *ps)
+						m.Unlock()
 					}
 				}
-				m.Unlock()
 			}
 			doneCount++
 			progress := float64(doneCount) * 100 / float64(len(proxies))

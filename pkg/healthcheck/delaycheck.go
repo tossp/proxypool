@@ -101,7 +101,6 @@ func CleanBadProxiesWithWorkpool(proxies []proxy.Proxy) (cproxies []proxy.Proxy)
 		pool.Submit(func() {
 			delay, err := testDelay(pp)
 			if err == nil && delay != 0 {
-				m.Lock()
 				if ps, ok := ProxyStats.Find(pp); ok {
 					ps.UpdatePSDelay(delay)
 					c <- ps
@@ -110,10 +109,11 @@ func CleanBadProxiesWithWorkpool(proxies []proxy.Proxy) (cproxies []proxy.Proxy)
 						Id:    pp.Identifier(),
 						Delay: delay,
 					}
+					m.Lock()
 					ProxyStats = append(ProxyStats, *ps)
+					m.Unlock()
 					c <- ps
 				}
-				m.Unlock()
 			}
 			fmt.Printf("\r\t%d/%d", atomic.AddUint32(&doneCount, 1), total)
 		})
