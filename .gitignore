@@ -29,3 +29,5 @@ assets/html/*
 assets/css/*
 assets/static/*
 
+proxypool*
+config/*
