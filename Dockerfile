@@ -5,13 +5,14 @@ WORKDIR /proxypool-src
 COPY . /proxypool-src
 RUN go mod download && \
     make docker && \
-    mv ./bin/proxypool-docker /proxypool
+    mv bin/proxypool-docker /proxypool
 
 FROM alpine:latest
 
 RUN apk add --no-cache ca-certificates tzdata
-WORKDIR /proxypool-src
-COPY ./assets /proxypool-src/assets
-COPY ./config /proxypool-src/config
-COPY --from=builder /proxypool /proxypool-src/
-ENTRYPOINT ["/proxypool-src/proxypool", "-d"]
+WORKDIR /app
+COPY ./assets /app/assets
+COPY ./config/config.yaml /app/config/
+COPY ./config/source.yaml /app/config/
+COPY --from=builder /proxypool /app/
+ENTRYPOINT ["/app/proxypool", "-d"]

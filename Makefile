@@ -23,17 +23,15 @@ PLATFORM_LIST = \
 
 all: linux-amd64 darwin-amd64 linux-armv8
 
-docker:
+docker2:
 	docker run --rm -v `go env GOPATH`:/go \
 		-v "$(shell PWD)":/go/src/$(NAME) \
 		-w /go/src/$(NAME) \
-		-e GOOS="linux" \
-		-e GOARCH="amd64" \
-		golang:1.17 \
-		bash -c " \
-	make linux-amd64\
-	"
-	#$(GOBUILD) -o $(BINDIR)/$(NAME)-$@
+		golang:1.17.5-alpine \
+		bash -c "$(GOBUILD) -o $(BINDIR)/$(NAME)-$@"
+
+docker:
+	$(GOBUILD) -o $(BINDIR)/$(NAME)-$@
 
 darwin-amd64:
 	GOARCH=amd64 GOOS=darwin $(GOBUILD) -o $(BINDIR)/$(NAME)-$@
@@ -91,3 +89,6 @@ all-arch: $(PLATFORM_LIST)
 releases: $(gz_releases)
 clean:
 	rm $(BINDIR)/*
+
+dockerhub:
+	docker buildx build --platform linux/amd64,linux/arm64/v8 -f Dockerfile -t bineyond/proxypool .  --push
