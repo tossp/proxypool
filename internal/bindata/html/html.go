@@ -120,14 +120,15 @@ func AssetNames() []string {
 // _bindata is a table, holding each asset generator, mapped to its name.
 var _bindata = map[string]func() ([]byte, error){
 	"assets/html/clash-config-local.yaml": assets_html_clash_config_local_yaml,
-	"assets/html/clash-config.yaml": assets_html_clash_config_yaml,
-	"assets/html/clash.html": assets_html_clash_html,
-	"assets/html/index.html": assets_html_index_html,
-	"assets/html/shadowrocket.html": assets_html_shadowrocket_html,
-	"assets/html/surge.conf": assets_html_surge_conf,
-	"assets/html/surge.html": assets_html_surge_html,
-	"assets/static/index.js": assets_static_index_js,
+	"assets/html/clash-config.yaml":       assets_html_clash_config_yaml,
+	"assets/html/clash.html":              assets_html_clash_html,
+	"assets/html/index.html":              assets_html_index_html,
+	"assets/html/shadowrocket.html":       assets_html_shadowrocket_html,
+	"assets/html/surge.conf":              assets_html_surge_conf,
+	"assets/html/surge.html":              assets_html_surge_html,
+	"assets/static/index.js":              assets_static_index_js,
 }
+
 // AssetDir returns the file names below a certain
 // directory embedded in the file by go-bindata.
 // For example if you run go-bindata on data/... and data contains the
@@ -164,30 +165,23 @@ func AssetDir(name string) ([]string, error) {
 }
 
 type _bintree_t struct {
-	Func func() ([]byte, error)
+	Func     func() ([]byte, error)
 	Children map[string]*_bintree_t
 }
+
 var _bintree = &_bintree_t{nil, map[string]*_bintree_t{
 	"assets": &_bintree_t{nil, map[string]*_bintree_t{
 		"html": &_bintree_t{nil, map[string]*_bintree_t{
-			"clash-config-local.yaml": &_bintree_t{assets_html_clash_config_local_yaml, map[string]*_bintree_t{
-			}},
-			"clash-config.yaml": &_bintree_t{assets_html_clash_config_yaml, map[string]*_bintree_t{
-			}},
-			"clash.html": &_bintree_t{assets_html_clash_html, map[string]*_bintree_t{
-			}},
-			"index.html": &_bintree_t{assets_html_index_html, map[string]*_bintree_t{
-			}},
-			"shadowrocket.html": &_bintree_t{assets_html_shadowrocket_html, map[string]*_bintree_t{
-			}},
-			"surge.conf": &_bintree_t{assets_html_surge_conf, map[string]*_bintree_t{
-			}},
-			"surge.html": &_bintree_t{assets_html_surge_html, map[string]*_bintree_t{
-			}},
+			"clash-config-local.yaml": &_bintree_t{assets_html_clash_config_local_yaml, map[string]*_bintree_t{}},
+			"clash-config.yaml":       &_bintree_t{assets_html_clash_config_yaml, map[string]*_bintree_t{}},
+			"clash.html":              &_bintree_t{assets_html_clash_html, map[string]*_bintree_t{}},
+			"index.html":              &_bintree_t{assets_html_index_html, map[string]*_bintree_t{}},
+			"shadowrocket.html":       &_bintree_t{assets_html_shadowrocket_html, map[string]*_bintree_t{}},
+			"surge.conf":              &_bintree_t{assets_html_surge_conf, map[string]*_bintree_t{}},
+			"surge.html":              &_bintree_t{assets_html_surge_html, map[string]*_bintree_t{}},
 		}},
 		"static": &_bintree_t{nil, map[string]*_bintree_t{
-			"index.js": &_bintree_t{assets_static_index_js, map[string]*_bintree_t{
-			}},
+			"index.js": &_bintree_t{assets_static_index_js, map[string]*_bintree_t{}},
 		}},
 	}},
 }}
