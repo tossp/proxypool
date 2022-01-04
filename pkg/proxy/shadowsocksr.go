@@ -78,7 +78,7 @@ func (ssr ShadowsocksR) Link() (link string) {
 	query := url.Values{}
 	query.Add("obfsparam", tool.Base64EncodeString(ssr.ObfsParam, true))
 	query.Add("protoparam", tool.Base64EncodeString(ssr.ProtocolParam, true))
-	//query.Add("remarks", tool.Base64EncodeString(ssr.Name, true))
+	// query.Add("remarks", tool.Base64EncodeString(ssr.Name, true))
 	query.Add("group", tool.Base64EncodeString("proxypoolss.herokuapp.com", true))
 	payload = tool.Base64EncodeString(fmt.Sprintf("%s/?%s", payload, query.Encode()), true)
 	return fmt.Sprintf("ssr://%s", payload)
@@ -121,18 +121,18 @@ func ParseSSRLink(link string) (*ShadowsocksR, error) {
 	moreInfo, _ := url.ParseQuery(infoPayload[1])
 
 	// remarks
-	//remarks := moreInfo.Get("remarks")
-	//remarks, err = tool.Base64DecodeString(remarks)
-	//if err != nil {
+	// remarks := moreInfo.Get("remarks")
+	// remarks, err = tool.Base64DecodeString(remarks)
+	// if err != nil {
 	//	remarks = ""
 	//	err = nil
-	//}
-	//if strings.ContainsAny(remarks, "\t\r\n ") {
+	// }
+	// if strings.ContainsAny(remarks, "\t\r\n ") {
 	//	remarks = strings.ReplaceAll(remarks, "\t", "")
 	//	remarks = strings.ReplaceAll(remarks, "\r", "")
 	//	remarks = strings.ReplaceAll(remarks, "\n", "")
 	//	remarks = strings.ReplaceAll(remarks, " ", "")
-	//}
+	// }
 
 	// protocol param
 	protocolParam, err := tool.Base64DecodeString(moreInfo.Get("protoparam"))
@@ -175,9 +175,7 @@ func ParseSSRLink(link string) (*ShadowsocksR, error) {
 	}, nil
 }
 
-var (
-	ssrPlainRe = regexp.MustCompile("ssr://([A-Za-z0-9+/_-])+")
-)
+var ssrPlainRe = regexp.MustCompile("ssr://([A-Za-z0-9+/_-])+")
 
 func GrepSSRLinkFromString(text string) []string {
 	results := make([]string, 0)

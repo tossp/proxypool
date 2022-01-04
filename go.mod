@@ -12,18 +12,18 @@ require (
 	github.com/antchfx/xmlquery v1.3.8 // indirect
 	github.com/antchfx/xpath v1.2.0 // indirect
 	github.com/arl/statsviz v0.4.0
-	github.com/cloudflare/cloudflare-go v0.27.0
+	github.com/cloudflare/cloudflare-go v0.28.0
 	github.com/gammazero/workerpool v1.1.2
 	github.com/ghodss/yaml v1.0.0
 	github.com/gin-contrib/cache v1.1.0
 	github.com/gin-contrib/pprof v1.3.0
-	github.com/gin-gonic/gin v1.7.4
+	github.com/gin-gonic/gin v1.7.7
 	github.com/go-playground/validator/v10 v10.9.0 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/gocolly/colly v1.2.0
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/gops v0.3.22
-	github.com/heroku/x v0.0.37
+	github.com/heroku/x v0.0.42
 	github.com/ivpusic/grpool v1.0.0
 	github.com/jasonlvhit/gocron v0.0.1
 	github.com/json-iterator/go v1.1.12 // indirect
@@ -42,8 +42,8 @@ require (
 	google.golang.org/protobuf v1.27.1 // indirect
 	gopkg.in/sourcemap.v1 v1.0.5 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
-	gorm.io/driver/postgres v1.2.1
-	gorm.io/gorm v1.22.2
+	gorm.io/driver/postgres v1.2.3
+	gorm.io/gorm v1.22.4
 )
 
 require (
@@ -51,45 +51,36 @@ require (
 	github.com/bradfitz/gomemcache v0.0.0-20190913173617-a41fca850d0b // indirect
 	github.com/gammazero/deque v0.1.0 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
-	github.com/go-chi/chi/v5 v5.0.5 // indirect
-	github.com/go-chi/cors v1.2.0 // indirect
-	github.com/go-chi/render v1.0.1 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
-	github.com/gofrs/uuid v4.1.0+incompatible // indirect
+	github.com/gofrs/uuid v4.2.0+incompatible // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/gomodule/redigo v2.0.0+incompatible // indirect
 	github.com/gorilla/websocket v1.4.2 // indirect
-	github.com/insomniacslk/dhcp v0.0.0-20211026125128-ad197bcd36fd // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
-	github.com/jackc/pgconn v1.10.0 // indirect
+	github.com/jackc/pgconn v1.10.1 // indirect
 	github.com/jackc/pgio v1.0.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
-	github.com/jackc/pgproto3/v2 v2.1.1 // indirect
+	github.com/jackc/pgproto3/v2 v2.2.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20200714003250-2b9c44734f2b // indirect
-	github.com/jackc/pgtype v1.8.1 // indirect
-	github.com/jackc/pgx/v4 v4.13.0 // indirect
+	github.com/jackc/pgtype v1.9.1 // indirect
+	github.com/jackc/pgx/v4 v4.14.1 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
-	github.com/jinzhu/now v1.1.2 // indirect
+	github.com/jinzhu/now v1.1.4 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
-	github.com/mattn/go-colorable v0.1.11 // indirect
+	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/memcachier/mc v2.0.1+incompatible // indirect
-	github.com/miekg/dns v1.1.43 // indirect
 	github.com/oschwald/maxminddb-golang v1.8.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/robfig/go-cache v0.0.0-20130306151617-9fc39e0dbf62 // indirect
-	github.com/u-root/uio v0.0.0-20210528151154-e40b768296a7 // indirect
 	github.com/ugorji/go/codec v1.2.6 // indirect
-	go.etcd.io/bbolt v1.3.6 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
-	go.uber.org/automaxprocs v1.4.0 // indirect
-	golang.org/x/crypto v0.0.0-20211108221036-ceb1ce70b4fa // indirect
-	golang.org/x/net v0.0.0-20211109214657-ef0fda0de508 // indirect
-	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
-	golang.org/x/sys v0.0.0-20211109184856-51b60fd695b3 // indirect
+	golang.org/x/crypto v0.0.0-20211202192323-5770296d904e // indirect
+	golang.org/x/net v0.0.0-20211206223403-eba003a116a9 // indirect
+	golang.org/x/sys v0.0.0-20211205182925-97ca703d548d // indirect
 	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211 // indirect
 	golang.org/x/text v0.3.7 // indirect
-	golang.org/x/time v0.0.0-20210723032227-1f47c861a9ac // indirect
+	golang.org/x/time v0.0.0-20211116232009-f0f3c7e86c11 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
