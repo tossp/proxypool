@@ -25,9 +25,9 @@ vendor
 .DS_Store
 
 # assets
-assets/html/*
-assets/css/*
-assets/static/*
+config/assets/html/*
+config/assets/css/*
+config/assets/static/*
 
 proxypool*
 config/*

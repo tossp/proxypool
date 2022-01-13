@@ -13,7 +13,7 @@ FROM alpine:latest
 RUN apk add --no-cache ca-certificates tzdata
 
 WORKDIR /app
-COPY ./assets /app/assets
+#COPY config/assets /app/assets
 COPY ./config/config.yaml /app/config/
 COPY ./config/source.yaml /app/config/
 COPY --from=builder /proxypool /app/

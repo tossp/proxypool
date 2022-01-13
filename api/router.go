@@ -6,15 +6,13 @@ import (
 	"os"
 	"runtime"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/One-Piecs/proxypool/internal/app"
-
+	// "github.com/One-Piecs/proxypool/internal/bindata"
 	"github.com/arl/statsviz"
 
 	"github.com/One-Piecs/proxypool/config"
-	binhtml "github.com/One-Piecs/proxypool/internal/bindata/html"
 	appcache "github.com/One-Piecs/proxypool/internal/cache"
 	"github.com/One-Piecs/proxypool/log"
 	"github.com/One-Piecs/proxypool/pkg/provider"
@@ -25,13 +23,19 @@ import (
 	_ "github.com/heroku/x/hmetrics/onload"
 )
 
-const version = "v0.7.5"
+const version = "v0.8.0"
 
 var router *gin.Engine
 
 func setupRouter() {
 	gin.SetMode(gin.ReleaseMode)
-	router = gin.New() // 没有任何中间件的路由
+	router = gin.New()              // 没有任何中间件的路由
+	temp, err := loadHTMLTemplate() // 加载html模板，模板源存放于html.go中的类似_assetsHtmlSurgeHtml的变量
+	if err != nil {
+		panic(err)
+	}
+	router.SetHTMLTemplate(temp) // 应用模板
+
 	store := persistence.NewInMemoryStore(time.Minute)
 	router.Use(gin.Recovery(), cache.SiteCache(store, time.Minute)) // 加上处理panic的中间件，防止遇到panic退出程序
 
@@ -44,19 +48,16 @@ func setupRouter() {
 		statsviz.IndexAtRoot("/debug/statsviz").ServeHTTP(context.Writer, context.Request)
 	})
 
-	// _ = binhtml.RestoreAssets("", "assets/html") // 恢复静态文件（不恢复问题也不大就是难修改）
-	// _ = binhtml.RestoreAssets("", "assets/static")
+	// router.StaticFS("/static", http.FS(config.StaticFS))
 
-	temp, err := loadHTMLTemplate() // 加载html模板，模板源存放于html.go中的类似_assetsHtmlSurgeHtml的变量
-	if err != nil {
-		panic(err)
-	}
-	router.SetHTMLTemplate(temp) // 应用模板
-
-	router.StaticFile("/static/index.js", "assets/static/index.js")
+	router.GET("/static/index.js", func(c *gin.Context) {
+		c.Header("Content-Type", "text/javascript")
+		data, _ := config.StaticFS.ReadFile("assets/static/index.js")
+		c.String(200, string(data))
+	})
 
 	router.GET("/", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "assets/html/index.html", gin.H{
+		c.HTML(http.StatusOK, "index.html", gin.H{
 			"domain":                      config.Config.Domain,
 			"getters_count":               appcache.GettersCount,
 			"all_proxies_count":           appcache.AllProxiesCount,
@@ -76,37 +77,37 @@ func setupRouter() {
 	})
 
 	router.GET("/clash", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "assets/html/clash.html", gin.H{
+		c.HTML(http.StatusOK, "clash.html", gin.H{
 			"domain": config.Config.Domain,
 			"port":   config.Config.Port,
 		})
 	})
 
 	router.GET("/surge", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "assets/html/surge.html", gin.H{
+		c.HTML(http.StatusOK, "surge.html", gin.H{
 			"domain": config.Config.Domain,
 		})
 	})
 
 	router.GET("/shadowrocket", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "assets/html/shadowrocket.html", gin.H{
+		c.HTML(http.StatusOK, "shadowrocket.html", gin.H{
 			"domain": config.Config.Domain,
 		})
 	})
 
 	router.GET("/clash/config", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "assets/html/clash-config.yaml", gin.H{
+		c.HTML(http.StatusOK, "clash-config.yaml", gin.H{
 			"domain": config.Config.Domain,
 		})
 	})
 	router.GET("/clash/localconfig", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "assets/html/clash-config-local.yaml", gin.H{
+		c.HTML(http.StatusOK, "clash-config-local.yaml", gin.H{
 			"port": config.Config.Port,
 		})
 	})
 
 	router.GET("/surge/config", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "assets/html/surge.conf", gin.H{
+		c.HTML(http.StatusOK, "surge.conf", gin.H{
 			"domain": config.Config.Domain,
 		})
 	})
@@ -133,7 +134,7 @@ func setupRouter() {
 		} else if proxyTypes == "all" {
 			proxies := appcache.GetProxies("allproxies")
 			clash := provider.Clash{
-				provider.Base{
+				Base: provider.Base{
 					Proxies:    &proxies,
 					Types:      proxyTypes,
 					Country:    proxyCountry,
@@ -146,7 +147,7 @@ func setupRouter() {
 		} else {
 			proxies := appcache.GetProxies("proxies")
 			clash := provider.Clash{
-				provider.Base{
+				Base: provider.Base{
 					Proxies:    &proxies,
 					Types:      proxyTypes,
 					Country:    proxyCountry,
@@ -230,7 +231,7 @@ func setupRouter() {
 		} else if proxyTypes == "all" {
 			proxies := appcache.GetProxies("allproxies")
 			loon := provider.Loon{
-				provider.Base{
+				Base: provider.Base{
 					Proxies:    &proxies,
 					Types:      proxyTypes,
 					Country:    proxyCountry,
@@ -243,7 +244,7 @@ func setupRouter() {
 		} else {
 			proxies := appcache.GetProxies("proxies")
 			loon := provider.Loon{
-				provider.Base{
+				Base: provider.Base{
 					Proxies:    &proxies,
 					Types:      proxyTypes,
 					Country:    proxyCountry,
@@ -344,17 +345,17 @@ func setupRouter() {
 
 			app.SpeedTest(pl)
 			appcache.SetString("clashproxies", provider.Clash{
-				provider.Base{
+				Base: provider.Base{
 					Proxies: &pl,
 				},
 			}.Provide()) // update static string provider
 			appcache.SetString("surgeproxies", provider.Surge{
-				provider.Base{
+				Base: provider.Base{
 					Proxies: &pl,
 				},
 			}.Provide())
 			appcache.SetString("loonproxies", provider.Loon{
-				provider.Base{
+				Base: provider.Base{
 					Proxies: &pl,
 				},
 			}.Provide())
@@ -388,16 +389,6 @@ func Run() {
 
 // 返回页面templates
 func loadHTMLTemplate() (t *template.Template, err error) {
-	t = template.New("")
-	for _, fileName := range binhtml.AssetNames() { //fileName带有路径前缀
-		if strings.Contains(fileName, "css") {
-			continue
-		}
-		data, _ := binhtml.Asset(fileName)           //读取页面数据
-		t, err = t.New(fileName).Parse(string(data)) //生成带路径名称的模板
-		if err != nil {
-			return nil, err
-		}
-	}
-	return t, nil
+	t, err = template.New("").ParseFS(config.HtmlFs, "assets/html/*")
+	return
 }
