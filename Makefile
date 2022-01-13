@@ -91,4 +91,6 @@ clean:
 	rm $(BINDIR)/*
 
 dockerhub:
-	docker buildx build --platform linux/amd64,linux/arm64/v8 -f Dockerfile -t bineyond/proxypool .  --push
+	@go mod vendor
+	docker buildx build --platform linux/amd64,linux/arm64/v8 -f Dockerfile -t bineyond/proxypool:0.8.0 -t bineyond/proxypool:latest .  --push
+	@rm -r vendor
