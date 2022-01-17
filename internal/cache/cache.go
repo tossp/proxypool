@@ -17,16 +17,6 @@ func GetProxies(key string) proxy.ProxyList {
 	return nil
 }
 
-func CopyProxies(key string) proxy.ProxyList {
-	result, found := c.Get(key)
-	if found {
-		out := make(proxy.ProxyList, len(result.(proxy.ProxyList)))
-		copy(out, result.(proxy.ProxyList))
-		return out
-	}
-	return nil
-}
-
 func SetProxies(key string, proxies proxy.ProxyList) {
 	c.Set(key, proxies, cache.NoExpiration)
 }

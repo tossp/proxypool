@@ -121,12 +121,23 @@ func (b *Base) preFilter() {
 				if ps.Speed != 0 {
 					// clear history speed tag
 					names := strings.Split(p.BaseInfo().Name, " |")
-					if len(names) > 1 {
-						p.BaseInfo().Name = names[0]
-					}
-					// check speed
+					/*
+						if len(names) > 1 {
+							p.BaseInfo().Name = names[0]
+						}
+						// check speed
+						if ps.Speed > speedMin && ps.Speed < speedMax {
+							p.AddToName(fmt.Sprintf(" |%6.2fMb", ps.Speed))
+						} else {
+							goto exclude
+						}
+					*/
+					// if ps.Speed > 0 {
+					// 	p.BaseInfo().Name = fmt.Sprintf("%s |%6.2fMb", names[0], ps.Speed)
+					// }
+					// 只更新，过滤的数据
 					if ps.Speed > speedMin && ps.Speed < speedMax {
-						p.AddToName(fmt.Sprintf(" |%6.2fMb", ps.Speed))
+						p.BaseInfo().Name = fmt.Sprintf("%s |%6.2fMb", names[0], ps.Speed)
 					} else {
 						goto exclude
 					}

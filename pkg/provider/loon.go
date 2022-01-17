@@ -27,16 +27,16 @@ func (s Loon) Provide() string {
 }
 
 func checkLoonSupport(p proxy.Proxy) bool {
-	switch p.(type) {
+	switch p := p.(type) {
 	case *proxy.ShadowsocksR:
-		ssr := p.(*proxy.ShadowsocksR)
+		ssr := p
 		if tool.CheckInList(proxy.SSRCipherList, ssr.Cipher) && tool.CheckInList(ssrProtocolList, ssr.Protocol) && tool.CheckInList(ssrObfsList, ssr.Obfs) {
 			return true
 		}
 	case *proxy.Vmess:
 		return true
 	case *proxy.Shadowsocks:
-		ss := p.(*proxy.Shadowsocks)
+		ss := p
 		if tool.CheckInList(proxy.SSCipherList, ss.Cipher) {
 			return true
 		}
