@@ -12,7 +12,17 @@ var c = cache.New(cache.NoExpiration, 10*time.Minute)
 func GetProxies(key string) proxy.ProxyList {
 	result, found := c.Get(key)
 	if found {
-		return result.(proxy.ProxyList) //Get返回的是interface
+		return result.(proxy.ProxyList) // Get返回的是interface
+	}
+	return nil
+}
+
+func CopyProxies(key string) proxy.ProxyList {
+	result, found := c.Get(key)
+	if found {
+		out := make(proxy.ProxyList, len(result.(proxy.ProxyList)))
+		copy(out, result.(proxy.ProxyList))
+		return out
 	}
 	return nil
 }

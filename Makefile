@@ -27,7 +27,7 @@ docker2:
 	docker run --rm -v `go env GOPATH`:/go \
 		-v "$(shell PWD)":/go/src/$(NAME) \
 		-w /go/src/$(NAME) \
-		golang:1.17.5-alpine \
+		golang:1.17.6-alpine \
 		bash -c "$(GOBUILD) -o $(BINDIR)/$(NAME)-$@"
 
 docker:
@@ -92,5 +92,5 @@ clean:
 
 dockerhub:
 	@go mod vendor
-	docker buildx build --platform linux/amd64,linux/arm64/v8 -f Dockerfile -t bineyond/proxypool:0.8.0 -t bineyond/proxypool:latest .  --push
+	docker buildx build --platform linux/amd64,linux/arm64/v8 -f Dockerfile -t bineyond/proxypool:0.8.1 -t bineyond/proxypool:latest .  --push
 	@rm -r vendor

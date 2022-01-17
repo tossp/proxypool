@@ -23,7 +23,7 @@ import (
 	_ "github.com/heroku/x/hmetrics/onload"
 )
 
-const version = "v0.8.0"
+const version = "v0.8.1"
 
 var router *gin.Engine
 
@@ -122,7 +122,7 @@ func setupRouter() {
 		if proxyTypes == "" && proxyCountry == "" && proxyNotCountry == "" && proxySpeed == "" && proxyFilter == "" {
 			text = appcache.GetString("clashproxies") // A string. To show speed in this if condition, this must be updated after speedtest
 			if text == "" {
-				proxies := appcache.GetProxies("proxies")
+				proxies := appcache.CopyProxies("proxies")
 				clash := provider.Clash{
 					Base: provider.Base{
 						Proxies: &proxies,
@@ -132,7 +132,7 @@ func setupRouter() {
 				appcache.SetString("clashproxies", text)
 			}
 		} else if proxyTypes == "all" {
-			proxies := appcache.GetProxies("allproxies")
+			proxies := appcache.CopyProxies("allproxies")
 			clash := provider.Clash{
 				Base: provider.Base{
 					Proxies:    &proxies,
@@ -145,7 +145,7 @@ func setupRouter() {
 			}
 			text = clash.Provide() // 根据Query筛选节点
 		} else {
-			proxies := appcache.GetProxies("proxies")
+			proxies := appcache.CopyProxies("proxies")
 			clash := provider.Clash{
 				Base: provider.Base{
 					Proxies:    &proxies,
@@ -170,7 +170,7 @@ func setupRouter() {
 		if proxyTypes == "" && proxyCountry == "" && proxyNotCountry == "" && proxySpeed == "" && proxyFilter == "" {
 			text = appcache.GetString("surgeproxies") // A string. To show speed in this if condition, this must be updated after speedtest
 			if text == "" {
-				proxies := appcache.GetProxies("proxies")
+				proxies := appcache.CopyProxies("proxies")
 				surge := provider.Surge{
 					Base: provider.Base{
 						Proxies: &proxies,
@@ -180,7 +180,7 @@ func setupRouter() {
 				appcache.SetString("surgeproxies", text)
 			}
 		} else if proxyTypes == "all" {
-			proxies := appcache.GetProxies("allproxies")
+			proxies := appcache.CopyProxies("allproxies")
 			surge := provider.Surge{
 				Base: provider.Base{
 					Proxies:    &proxies,
@@ -193,7 +193,7 @@ func setupRouter() {
 			}
 			text = surge.Provide()
 		} else {
-			proxies := appcache.GetProxies("proxies")
+			proxies := appcache.CopyProxies("proxies")
 			surge := provider.Surge{
 				Base: provider.Base{
 					Proxies:    &proxies,
@@ -219,7 +219,7 @@ func setupRouter() {
 		if proxyTypes == "" && proxyCountry == "" && proxyNotCountry == "" && proxySpeed == "" && proxyFilter == "" {
 			text = appcache.GetString("loonproxies") // A string. To show speed in this if condition, this must be updated after speedtest
 			if text == "" {
-				proxies := appcache.GetProxies("proxies")
+				proxies := appcache.CopyProxies("proxies")
 				loon := provider.Loon{
 					Base: provider.Base{
 						Proxies: &proxies,
@@ -229,7 +229,7 @@ func setupRouter() {
 				appcache.SetString("loonproxies", text)
 			}
 		} else if proxyTypes == "all" {
-			proxies := appcache.GetProxies("allproxies")
+			proxies := appcache.CopyProxies("allproxies")
 			loon := provider.Loon{
 				Base: provider.Base{
 					Proxies:    &proxies,
@@ -242,7 +242,7 @@ func setupRouter() {
 			}
 			text = loon.Provide() // 根据Query筛选节点
 		} else {
-			proxies := appcache.GetProxies("proxies")
+			proxies := appcache.CopyProxies("proxies")
 			loon := provider.Loon{
 				Base: provider.Base{
 					Proxies:    &proxies,
@@ -259,7 +259,7 @@ func setupRouter() {
 	})
 
 	router.GET("/ss/sub", func(c *gin.Context) {
-		proxies := appcache.GetProxies("proxies")
+		proxies := appcache.CopyProxies("proxies")
 		ssSub := provider.SSSub{
 			Base: provider.Base{
 				Proxies: &proxies,
@@ -269,7 +269,7 @@ func setupRouter() {
 		c.String(200, ssSub.Provide())
 	})
 	router.GET("/ssr/sub", func(c *gin.Context) {
-		proxies := appcache.GetProxies("proxies")
+		proxies := appcache.CopyProxies("proxies")
 		ssrSub := provider.SSRSub{
 			Base: provider.Base{
 				Proxies: &proxies,
@@ -279,7 +279,7 @@ func setupRouter() {
 		c.String(200, ssrSub.Provide())
 	})
 	router.GET("/vmess/sub", func(c *gin.Context) {
-		proxies := appcache.GetProxies("proxies")
+		proxies := appcache.CopyProxies("proxies")
 		vmessSub := provider.VmessSub{
 			Base: provider.Base{
 				Proxies: &proxies,
@@ -289,7 +289,7 @@ func setupRouter() {
 		c.String(200, vmessSub.Provide())
 	})
 	router.GET("/sip002/sub", func(c *gin.Context) {
-		proxies := appcache.GetProxies("proxies")
+		proxies := appcache.CopyProxies("proxies")
 		sip002Sub := provider.SIP002Sub{
 			Base: provider.Base{
 				Proxies: &proxies,
@@ -299,7 +299,7 @@ func setupRouter() {
 		c.String(200, sip002Sub.Provide())
 	})
 	router.GET("/trojan/sub", func(c *gin.Context) {
-		proxies := appcache.GetProxies("proxies")
+		proxies := appcache.CopyProxies("proxies")
 		trojanSub := provider.TrojanSub{
 			Base: provider.Base{
 				Proxies: &proxies,
@@ -310,7 +310,7 @@ func setupRouter() {
 	})
 	router.GET("/link/:id", func(c *gin.Context) {
 		idx := c.Param("id")
-		proxies := appcache.GetProxies("allproxies")
+		proxies := appcache.CopyProxies("allproxies")
 		id, err := strconv.Atoi(idx)
 		if err != nil {
 			c.String(500, err.Error())
