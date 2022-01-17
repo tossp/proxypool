@@ -92,5 +92,5 @@ clean:
 
 dockerhub:
 	@go mod vendor
-	docker buildx build --platform linux/amd64,linux/arm64/v8 -f Dockerfile -t bineyond/proxypool:0.8.1 -t bineyond/proxypool:latest .  --push
+	docker buildx build --platform linux/amd64,linux/arm64/v8 -f Dockerfile -t bineyond/proxypool:0.8.2 -t bineyond/proxypool:latest .  --push
 	@rm -r vendor
