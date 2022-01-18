@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/xml"
 	"errors"
+
 	C "github.com/Dreamacro/clash/constant"
 )
 
@@ -24,6 +25,9 @@ type Users struct {
 func fetchUserInfo(clashProxy C.Proxy) (user *User, err error) {
 	url := "https://www.speedtest.net/speedtest-config.php"
 	body, err := HTTPGetBodyViaProxy(clashProxy, url)
+	if err != nil {
+		return nil, errors.New("Get user to speedtest.net. :" + err.Error())
+	}
 	decoder := xml.NewDecoder(bytes.NewReader(body))
 	users := Users{}
 	for {
@@ -33,11 +37,11 @@ func fetchUserInfo(clashProxy C.Proxy) (user *User, err error) {
 		}
 		switch se := t.(type) {
 		case xml.StartElement:
-			decoder.DecodeElement(&users, &se)
+			_ = decoder.DecodeElement(&users, &se)
 		}
 	}
 	if users.Users == nil {
-		//log.Println("Warning: Cannot fetch user information. http://www.speedtest.net/speedtest-config.php is temporarily unavailable.")
+		// log.Println("Warning: Cannot fetch user information. http://www.speedtest.net/speedtest-config.php is temporarily unavailable.")
 		return nil, errors.New("No user to speedtest.net. ")
 	}
 	return &users.Users[0], nil

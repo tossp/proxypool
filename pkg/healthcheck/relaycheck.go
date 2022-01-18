@@ -167,8 +167,6 @@ func isRelay(src string, out string) bool {
 	ipv4Mask := net.CIDRMask(24, 32)
 	ip1 := net.ParseIP(src)
 	ip2 := net.ParseIP(out)
-	if fmt.Sprint(ip1.Mask(ipv4Mask)) == fmt.Sprint(ip2.Mask(ipv4Mask)) { // Pool
-		return false
-	}
-	return true
+
+	return string(ip1.Mask(ipv4Mask)) != string(ip2.Mask(ipv4Mask))
 }

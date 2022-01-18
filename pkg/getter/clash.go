@@ -41,7 +41,6 @@ func (c *Clash) Get() proxy.ProxyList {
 	}
 
 	return ClashProxy2ProxyArray(conf.Proxy)
-
 }
 
 func (c *Clash) Get2Chan(pc chan proxy.Proxy) {

@@ -20,7 +20,7 @@ var location, _ = time.LoadLocation("PRC")
 
 func CrawlGo() {
 	wg := &sync.WaitGroup{}
-	var pc = make(chan proxy.Proxy)
+	pc := make(chan proxy.Proxy)
 	for _, g := range Getters {
 		wg.Add(1)
 		go g.Get2ChanWG(pc, wg)
@@ -60,7 +60,7 @@ func CrawlGo() {
 
 	// Clean Clash unsupported proxy because health check depends on clash
 	proxies = provider.Clash{
-		provider.Base{
+		Base: provider.Base{
 			Proxies: &proxies,
 		},
 	}.CleanProxies()
@@ -118,9 +118,9 @@ func CrawlGo() {
 	*/
 	// 中转检测并命名
 	healthcheck.RelayCheckWorkpool(proxies)
-	for i, _ := range proxies {
+	for i := range proxies {
 		if s, ok := healthcheck.ProxyStats.Find(proxies[i]); ok {
-			if s.Relay == true {
+			if s.Relay {
 				_, c, e := geoIp.GeoIpDB.Find(s.OutIp)
 				if e == nil {
 					// proxies[i].SetName(fmt.Sprintf("Relay_%s-%s", proxies[i].BaseInfo().Name, c))
@@ -129,15 +129,15 @@ func CrawlGo() {
 						// proxies[i].SetCountry(fmt.Sprintf("%s-%s", proxies[i].BaseInfo().Name, c))
 						// proxies[i].SetName(fmt.Sprintf("Relay_%s-%s", proxies[i].BaseInfo().Name, c))
 
-						proxies[i].SetCountry(fmt.Sprintf("%s", c))
+						proxies[i].SetCountry(c)
 						proxies[i].SetName(fmt.Sprintf("Relay %s", c))
 					} else {
 						proxies[i].SetCountry(c)
 						proxies[i].SetName(c)
 					}
-
 				}
-			} else if s.Pool == true {
+				// }
+				// else if s.Pool {
 				// proxies[i].SetName(fmt.Sprintf("Pool_%s", proxies[i].BaseInfo().Name))
 			}
 		}
@@ -160,17 +160,17 @@ func CrawlGo() {
 	// 测速
 	speedTestNew(proxies)
 	cache.SetString("clashproxies", provider.Clash{
-		provider.Base{
+		Base: provider.Base{
 			Proxies: &proxies,
 		},
 	}.Provide()) // update static string provider
 	cache.SetString("surgeproxies", provider.Surge{
-		provider.Base{
+		Base: provider.Base{
 			Proxies: &proxies,
 		},
 	}.Provide())
 	cache.SetString("loonproxies", provider.Loon{
-		provider.Base{
+		Base: provider.Base{
 			Proxies: &proxies,
 		},
 	}.Provide())

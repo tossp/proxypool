@@ -11,20 +11,20 @@ var (
 )
 
 func init() {
-	//ok := initDir(logDir)
-	//fPath := filepath.Join(logDir, logFile)
-	//if ok {
+	// ok := initDir(logDir)
+	// fPath := filepath.Join(logDir, logFile)
+	// if ok {
 	//	if f := initFile(fPath); f != nil {
 	//		if err := f.Close(); err != nil {
 	//			Infoln("init log file in %s", fPath)
 	//		}
 	//	}
-	//}
+	// }
 }
 
 func initDir(path string) bool {
 	if _, err := os.Stat(path); os.IsNotExist(err) {
-		if err := os.Mkdir(path, 0755); err != nil {
+		if err := os.Mkdir(path, 0o755); err != nil {
 			Errorln("init log dir error: %s", err.Error())
 		}
 	}
@@ -33,7 +33,7 @@ func initDir(path string) bool {
 
 func initFile(path string) *os.File {
 	// TODO detect old log files and compress
-	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE, 0755)
+	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE, 0o755)
 	if err != nil {
 		Errorln("get log file error: %s", err.Error())
 	}

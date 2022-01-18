@@ -3,18 +3,15 @@ package proxy
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net"
 	"net/url"
 	"regexp"
 	"strconv"
 	"strings"
-
-	"fmt"
 )
 
-var (
-	ErrorNotTrojanink = errors.New("not a correct trojan link")
-)
+var ErrorNotTrojanink = errors.New("not a correct trojan link")
 
 type Trojan struct {
 	Base
@@ -127,14 +124,14 @@ func ParseTrojanLink(link string) (*Trojan, error) {
 	port, _ := strconv.Atoi(uri.Port())
 
 	moreInfos := uri.Query()
-	sni := moreInfos.Get("sni")
-	sni, _ = url.QueryUnescape(sni)
+	// sni := moreInfos.Get("sni")
+	// sni, _ = url.QueryUnescape(sni)
 	transformType := moreInfos.Get("type")
 	transformType, _ = url.QueryUnescape(transformType)
 	host := moreInfos.Get("host")
 	host, _ = url.QueryUnescape(host)
-	path := moreInfos.Get("path")
-	path, _ = url.QueryUnescape(path)
+	// path := moreInfos.Get("path")
+	// path, _ = url.QueryUnescape(path)
 
 	alpn := make([]string, 0)
 	if transformType == "h2" {
@@ -160,9 +157,7 @@ func ParseTrojanLink(link string) (*Trojan, error) {
 	}, nil
 }
 
-var (
-	trojanPlainRe = regexp.MustCompile("trojan(-go)?://([A-Za-z0-9+/_&?=@:%.-])+")
-)
+var trojanPlainRe = regexp.MustCompile("trojan(-go)?://([A-Za-z0-9+/_&?=@:%.-])+")
 
 func GrepTrojanLinkFromString(text string) []string {
 	results := make([]string, 0)

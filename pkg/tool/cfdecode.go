@@ -3,11 +3,12 @@ package tool
 import (
 	"bytes"
 	"errors"
-	"github.com/robertkrimen/otto"
 	"io/ioutil"
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/robertkrimen/otto"
 )
 
 // Find email playload
@@ -30,7 +31,7 @@ func CFEmailDecode(a string) (s string, err error) {
 	r, _ := strconv.ParseInt(a[0:2], 16, 0)
 	for n := 4; n < len(a)+2; n += 2 {
 		i, _ := strconv.ParseInt(a[n-2:n], 16, 0)
-		//e.WriteString(string(i ^ r))
+		// e.WriteString(string(i ^ r))
 		e.WriteString(string(rune(i ^ r)))
 	}
 	return e.String(), nil
@@ -93,8 +94,8 @@ func ScriptReplace(js string, varname string) string {
 	if len(js) < 2 {
 		return js
 	}
-	for i, _ := range strs {
-		//replace location
+	for i := range strs {
+		// replace location
 		if varLocation != "" && strings.Contains(strs[i], varLocation) {
 			re3, err := regexp.Compile(varLocation + ".*?[]]") // _LoKlO[_jzvXT]
 			if err == nil {
@@ -152,7 +153,7 @@ func ScriptReplace(js string, varname string) string {
 	}
 
 	if varWindow != "" {
-		for i, _ := range strs {
+		for i := range strs {
 			if strings.Contains(strs[i], varWindow) {
 				bound = i
 				break

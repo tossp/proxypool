@@ -5,9 +5,9 @@ import (
 )
 
 func TestConnect(t *testing.T) {
-	//t.SkipNow()
-	connect()
-	//InitTables()
-	//proxies := GetAllProxies()
-	//fmt.Println(proxies.Len())
+	// t.SkipNow()
+	// connect()
+	// InitTables()
+	// proxies := GetAllProxies()
+	// fmt.Println(proxies.Len())
 }

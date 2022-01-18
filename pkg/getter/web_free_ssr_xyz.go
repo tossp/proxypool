@@ -21,8 +21,7 @@ const (
 	freessrxyzV2rayLink = "https://api.free-ssr.xyz/v2ray"
 )
 
-type WebFreessrXyz struct {
-}
+type WebFreessrXyz struct{}
 
 func NewWebFreessrxyzGetter(options tool.Options) (getter Getter, err error) {
 	return &WebFreessrXyz{}, nil

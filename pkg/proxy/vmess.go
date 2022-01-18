@@ -262,7 +262,7 @@ func ParseVmessLink(link string) (*Vmess, error) {
 
 		// Network <- obfs=websocket
 		obfs := moreInfo.Get("obfs")
-		network := "tcp"
+		network := ""
 		if obfs == "http" {
 			httpOpt.Method = "GET" // 不知道Headers为空时会不会报错
 		}
@@ -405,9 +405,7 @@ func ParseVmessLink(link string) (*Vmess, error) {
 	}
 }
 
-var (
-	vmessPlainRe = regexp.MustCompile("vmess://([A-Za-z0-9+/_?&=-])+")
-)
+var vmessPlainRe = regexp.MustCompile("vmess://([A-Za-z0-9+/_?&=-])+")
 
 func GrepVmessLinkFromString(text string) []string {
 	results := make([]string, 0)
@@ -424,7 +422,7 @@ func str2jsonDynaUnmarshal(s string) (jsn map[string]interface{}, err error) {
 	if err != nil {
 		return nil, err
 	}
-	jsn = f.(interface{}).(map[string]interface{}) // f is pointer point to map struct
+	jsn = f.(map[string]interface{}) // f is pointer point to map struct
 	if jsn == nil {
 		return nil, ErrorVmessPayloadParseFail
 	}
@@ -441,27 +439,24 @@ func mapStrInter2VmessLinkJson(jsn map[string]interface{}) (vmessLinkJson, error
 		tag := strings.Split(tags, ",")
 		if jsnVal, ok := jsn[strings.ToLower(tag[0])]; ok {
 			if strings.ToLower(tag[0]) == "port" { // set int in port
-				switch jsnVal.(type) {
+				switch jsnVal := jsnVal.(type) {
 				case float64:
-					vmessVal.Field(i).SetInt(int64(jsnVal.(float64)))
-					break
+					vmessVal.Field(i).SetInt(int64(jsnVal))
 				case string: // Force Convert
-					valInt, err := strconv.Atoi(jsnVal.(string))
+					valInt, err := strconv.Atoi(jsnVal)
 					if err != nil {
 						valInt = 443
 					}
 					vmessVal.Field(i).SetInt(int64(valInt))
-					break
 				default:
 					vmessVal.Field(i).SetInt(443)
 				}
 			} else if strings.ToLower(tag[0]) == "ps" {
 				continue
 			} else { // set string in other fields
-				switch jsnVal.(type) {
+				switch jsnVal := jsnVal.(type) {
 				case string:
-					vmessVal.Field(i).SetString(jsnVal.(string))
-					break
+					vmessVal.Field(i).SetString(jsnVal)
 				default: // Force Convert
 					vmessVal.Field(i).SetString(fmt.Sprintf("%v", jsnVal))
 				}

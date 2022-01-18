@@ -42,7 +42,7 @@ func SaveProxyList(pl proxy.ProxyList) {
 		return
 	}
 
-	DB.Transaction(func(tx *gorm.DB) error {
+	_ = DB.Transaction(func(tx *gorm.DB) error {
 		// Set All Usable to false
 		if err := DB.Model(&Proxy{}).Where("useable = ?", true).Update("useable", "false").Error; err != nil {
 			log.Warnln("database: Reset useable to false failed: %s", err.Error())

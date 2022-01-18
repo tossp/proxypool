@@ -4,9 +4,10 @@ import (
 	"bytes"
 	"encoding/xml"
 	"errors"
-	C "github.com/Dreamacro/clash/constant"
 	"math"
 	"time"
+
+	C "github.com/Dreamacro/clash/constant"
 )
 
 // Server information
@@ -100,7 +101,7 @@ func distance(lat1 float64, lon1 float64, lat2 float64, lon2 float64) float64 {
 
 // StartTest : start testing to the servers.
 func (svrs Servers) StartTest(clashProxy C.Proxy) {
-	for i, _ := range svrs {
+	for i := range svrs {
 		latency := pingTest(clashProxy, svrs[i].URL)
 		if latency == time.Second*5 { // fail to get latency, skip
 			continue
@@ -130,8 +131,7 @@ func (svrs Servers) GetResult() float64 {
 		if count == 0 {
 			return -1
 		}
-		//fmt.Printf("Download Avg: %5.2f Mbit/s\n", avgDL/float64(len(svrs)))
+		// fmt.Printf("Download Avg: %5.2f Mbit/s\n", avgDL/float64(len(svrs)))
 		return avgDL / float64(count)
 	}
-
 }

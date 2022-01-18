@@ -34,11 +34,11 @@ type TGChannelGetter struct {
 func NewTGChannelGetter(options tool.Options) (getter Getter, err error) {
 	num, found := options["num"]
 	t := 200
-	switch num.(type) {
+	switch num := num.(type) {
 	case int:
-		t = num.(int)
+		t = num
 	case float64:
-		t = int(num.(float64))
+		t = int(num)
 	}
 
 	if !found || t <= 0 {
@@ -114,6 +114,10 @@ func (g *TGChannelGetter) Get() proxy.ProxyList {
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return result
+	}
+
 	items := strings.Split(string(body), "\n")
 
 	rssStart := time.Now()
@@ -167,6 +171,7 @@ func (g *TGChannelGetter) Get2ChanWG(pc chan proxy.Proxy, wg *sync.WaitGroup) {
 		pc <- node
 	}
 }
+
 func (g *TGChannelGetter) Get2Chan(pc chan proxy.Proxy) {
 	nodes := g.Get()
 	log.Infoln("STATISTIC: TGChannel\tcount=%d\turl=%s", len(nodes), g.Url)

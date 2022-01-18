@@ -22,8 +22,10 @@ import (
 	"github.com/ivpusic/grpool"
 )
 
-var SpeedTimeout = time.Second * 10
-var SpeedExist = false
+var (
+	SpeedTimeout = time.Second * 10
+	SpeedExist   = false
+)
 
 // SpeedTestAll tests speed of a group of proxies. Results are stored in ProxyStats
 func SpeedTestAll(proxies []proxy.Proxy, conns int) {
@@ -292,9 +294,9 @@ func ProxySpeedTest(p proxy.Proxy) (speedResult float64, err error) {
 	if user == nil {
 		return -1, errors.New("fetch User Infoln failed in go routine") // 我真的不会用channel抛出err，go routine的不明原因阻塞我服了。下面的两个BUG现在都不知道原因，逻辑上不该出现的
 	}
-	if &serverList == nil {
-		return -1, errors.New("unexpected error when fetching serverlist: addr of var serverlist nil")
-	}
+	// if &serverList == nil {
+	// 	return -1, errors.New("unexpected error when fetching serverlist: addr of var serverlist nil")
+	// }
 	if len(serverList.Servers) == 0 {
 		return -1, errors.New("unexpected error when fetching serverlist: unexpected 0 server")
 	}
@@ -312,21 +314,20 @@ func ProxySpeedTest(p proxy.Proxy) (speedResult float64, err error) {
 	sort.Sort(ByDistance{serverList.Servers})
 
 	var targets Servers
-	targets = append(serverList.Servers[:3])
+	targets = serverList.Servers[:3]
 
 	// Test
 	targets.StartTest(clashProxy)
 	speedResult = targets.GetResult()
 
 	return speedResult, nil
-
 }
 
 /* Test with SpeedTest.net */
 // Download Size(MB)  0.245 0.5 1.125  2   5     8     12.5  18    24.5  32
 var dlSizes = [...]int{350, 500, 750, 1000, 1500, 2000, 2500, 3000, 3500, 4000}
 
-//var ulSizes = [...]int{100, 300, 500, 800, 1000, 1500, 2500, 3000, 3500, 4000} //kB
+// var ulSizes = [...]int{100, 300, 500, 800, 1000, 1500, 2500, 3000, 3500, 4000} //kB
 
 func pingTest(clashProxy C.Proxy, sURL string) time.Duration {
 	pingURL := strings.Split(sURL, "/upload")[0] + "/latency.txt"
@@ -378,7 +379,7 @@ func downloadTest(clashProxy C.Proxy, sURL string, latency time.Duration) float6
 	err = downloadRequest(clashProxy, dlURL, weight)
 	fTime = time.Now()
 	if err != nil && errors.Is(err, context.DeadlineExceeded) {
-		return wuSpeed // todo Incorrect Result
+		return dlSpeed // todo Incorrect Result
 	}
 	reqMB := dlSizes[weight] * dlSizes[weight] * 2 / 1000 / 1000
 	dlSpeed = float64(reqMB) * 8 / fTime.Sub(sTime).Seconds()

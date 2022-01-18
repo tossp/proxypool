@@ -76,7 +76,7 @@ type Proxy interface {
 	SetName(name string)
 	AddToName(name string)
 	SetIP(ip string)
-	TypeName() string //ss ssr vmess trojan
+	TypeName() string // ss ssr vmess trojan
 	BaseInfo() *Base
 	Clone() Proxy
 	SetUseable(useable bool)
@@ -102,9 +102,9 @@ func ParseProxyFromLink(link string) (p Proxy, err error) {
 	}
 	p.SetCountry(country)
 	// trojan依赖域名？<-这是啥?不管什么情况感觉都不应该替换域名为IP（主要是IP库的质量和节点质量不该挂钩）
-	//if p.TypeName() != "trojan" {
+	// if p.TypeName() != "trojan" {
 	//	p.SetIP(ip)
-	//}
+	// }
 	return
 }
 

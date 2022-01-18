@@ -16,8 +16,10 @@ import (
 	"github.com/One-Piecs/proxypool/log"
 )
 
-var configFilePath = ""
-var debugMode = false
+var (
+	configFilePath = ""
+	debugMode      = false
+)
 
 func main() {
 	//go func() {

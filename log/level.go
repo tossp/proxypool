@@ -14,12 +14,10 @@ const (
 	ERROR
 )
 
-var (
-	levelMapping = map[LogLevel]log.Level{
-		TRACE:   log.TraceLevel,
-		DEBUG:   log.DebugLevel,
-		INFO:    log.InfoLevel,
-		WARNING: log.WarnLevel,
-		ERROR:   log.ErrorLevel,
-	}
-)
+var levelMapping = map[LogLevel]log.Level{
+	TRACE:   log.TraceLevel,
+	DEBUG:   log.DebugLevel,
+	INFO:    log.InfoLevel,
+	WARNING: log.WarnLevel,
+	ERROR:   log.ErrorLevel,
+}
