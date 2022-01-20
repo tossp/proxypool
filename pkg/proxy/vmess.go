@@ -18,6 +18,7 @@ import (
 var (
 	ErrorNotVmessLink          = errors.New("not a correct vmess link")
 	ErrorVmessPayloadParseFail = errors.New("vmess link payload parse failed")
+	userAgent                  = `user-agent:Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1`
 )
 
 type Vmess struct {
@@ -104,14 +105,17 @@ func (v Vmess) ToSurge() string {
 				wsHeasers += "|" + k + ":" + v
 			}
 		}
-		text := fmt.Sprintf("%s = vmess, %s, %d, username=%s, alterId=%d, ws=true, tls=%t, ws-path=%s, skip-cert-verify=%v",
+		text := fmt.Sprintf("%s = vmess, %s, %d, username=%s, alterId=%d, ws=true, tls=%t, ws-path=%s, skip-cert-verify=%v, vmess-aead=true",
 			v.Name, v.Server, v.Port, v.UUID, v.AlterID, v.TLS, v.WSPath, v.SkipCertVerify)
 		if wsHeasers != "" {
-			text += ", ws-headers=" + wsHeasers
+			// text += ", ws-headers=" + wsHeasers
+			text += fmt.Sprintf(`, ws-headers="%s|%s"`, wsHeasers, userAgent)
+		} else {
+			text += fmt.Sprintf(`, ws-headers="%s"`, userAgent)
 		}
 		return text
 	} else {
-		return fmt.Sprintf("%s = vmess, %s, %d, username=%s, alterId=%d, tls=%t, skip-cert-verify=%v",
+		return fmt.Sprintf("%s = vmess, %s, %d, username=%s, alterId=%d, tls=%t, skip-cert-verify=%v, vmess-aead=true",
 			v.Name, v.Server, v.Port, v.UUID, v.AlterID, v.TLS, v.SkipCertVerify)
 	}
 }
