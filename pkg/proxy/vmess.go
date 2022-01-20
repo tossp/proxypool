@@ -12,13 +12,13 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/One-Piecs/proxypool/config"
 	"github.com/One-Piecs/proxypool/pkg/tool"
 )
 
 var (
 	ErrorNotVmessLink          = errors.New("not a correct vmess link")
 	ErrorVmessPayloadParseFail = errors.New("vmess link payload parse failed")
-	userAgent                  = `user-agent:Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1`
 )
 
 type Vmess struct {
@@ -109,9 +109,9 @@ func (v Vmess) ToSurge() string {
 			v.Name, v.Server, v.Port, v.UUID, v.AlterID, v.TLS, v.WSPath, v.SkipCertVerify)
 		if wsHeasers != "" {
 			// text += ", ws-headers=" + wsHeasers
-			text += fmt.Sprintf(`, ws-headers="%s|%s"`, wsHeasers, userAgent)
+			text += fmt.Sprintf(`, ws-headers="%s|%s"`, wsHeasers, config.Config.V2WsHeaderUserAgent)
 		} else {
-			text += fmt.Sprintf(`, ws-headers="%s"`, userAgent)
+			text += fmt.Sprintf(`, ws-headers="%s"`, config.Config.V2WsHeaderUserAgent)
 		}
 		return text
 	} else {

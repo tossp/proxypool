@@ -32,6 +32,7 @@ type ConfigOptions struct {
 	ActiveInterval        uint64   `json:"active-interval" yaml:"active-interval"`
 	ActiveMaxNumber       uint16   `json:"active-max-number" yaml:"active-max-number"`
 	TgChannelProxyUrl     string   `json:"tg_channel_proxy_url" yaml:"tg_channel_proxy_url"`
+	V2WsHeaderUserAgent   string   `json:"v2_ws_header_user_agent" yaml:"v2_ws_header_user_agent"`
 }
 
 // Config 配置
@@ -75,6 +76,10 @@ func Parse(path string) error {
 	}
 	if Config.ActiveMaxNumber == 0 {
 		Config.ActiveMaxNumber = 100
+	}
+
+	if Config.V2WsHeaderUserAgent == "" {
+		Config.V2WsHeaderUserAgent = "user-agent:Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1"
 	}
 
 	// 部分配置环境变量优先
