@@ -4,7 +4,7 @@ BINDIR=bin
 VERSION=$(shell git describe --tags || echo "unknown version")
 
 LDFLAGS=" \
-	-X 'main.version=$(VERSION)-$(shell git show -s --format=%h)' \
+	-X 'main.version=$(VERSION)' \
 	-w -s \
 "
 
