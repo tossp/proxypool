@@ -1,4 +1,7 @@
 NAME=proxypool
+
+VERSION=0.8.3
+
 BINDIR=bin
 VERSION=$(shell git describe --tags || echo "unknown version")
 GOBUILD=CGO_ENABLED=0 go build -trimpath -ldflags '-w -s'
@@ -92,5 +95,5 @@ clean:
 
 dockerhub:
 	@go mod vendor
-	docker buildx build --platform linux/amd64,linux/arm64/v8 -f Dockerfile -t bineyond/proxypool:0.8.2 -t bineyond/proxypool:latest .  --push
+	docker buildx build --platform linux/amd64,linux/arm64/v8 -f Dockerfile -t bineyond/proxypool$(VERSIONs) -t bineyond/proxypool:latest .  --push
 	@rm -r vendor
