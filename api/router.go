@@ -23,9 +23,14 @@ import (
 	_ "github.com/heroku/x/hmetrics/onload"
 )
 
-const version = "v0.8.3"
+var (
+	version string
+	router  *gin.Engine
+)
 
-var router *gin.Engine
+func SetVersion(v string) {
+	version = v
+}
 
 func setupRouter() {
 	gin.SetMode(gin.ReleaseMode)

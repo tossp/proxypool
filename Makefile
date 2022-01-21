@@ -1,10 +1,14 @@
 NAME=proxypool
 
-VERSION=0.8.3
-
 BINDIR=bin
 VERSION=$(shell git describe --tags || echo "unknown version")
-GOBUILD=CGO_ENABLED=0 go build -trimpath -ldflags '-w -s'
+
+LDFLAGS=" \
+	-X 'main.version=$(VERSION)-$(shell git show -s --format=%h)' \
+	-w -s \
+"
+
+GOBUILD=CGO_ENABLED=0 go build -trimpath -ldflags $(LDFLAGS)
 
 PLATFORM_LIST = \
 	darwin-amd64 \

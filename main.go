@@ -19,12 +19,14 @@ import (
 var (
 	configFilePath = ""
 	debugMode      = false
+	version        string
 )
 
 func main() {
-	//go func() {
+	// go func() {
 	//	http.ListenAndServe("0.0.0.0:6060", nil)
-	//}()
+	// }()
+	api.SetVersion(version)
 
 	flag.StringVar(&configFilePath, "c", "", "path to config file: config.yaml")
 	flag.BoolVar(&debugMode, "d", false, "debug output")
