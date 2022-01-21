@@ -41,6 +41,14 @@ func InitGeoIpDB() error {
 	return nil
 }
 
+func ReInitGeoIpDB() {
+	db := GeoIpDB
+	defer db.db.Close()
+
+	// log.Println("更新Country.mmdb")
+	GeoIpDB = NewGeoIP("assets/Country.mmdb", "assets/flags.json")
+}
+
 // GeoIP2
 type GeoIP struct {
 	db       *geoip2.Reader

@@ -8,6 +8,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/One-Piecs/proxypool/pkg/geoIp"
+
 	"github.com/One-Piecs/proxypool/internal/app"
 	// "github.com/One-Piecs/proxypool/internal/bindata"
 	"github.com/arl/statsviz"
@@ -364,6 +366,15 @@ func setupRouter() {
 					Proxies: &pl,
 				},
 			}.Provide())
+			runtime.GC()
+		}()
+		c.String(200, "ok")
+	})
+
+	router.GET("/task/updateGeoIP", func(c *gin.Context) {
+		go func() {
+			log.Infoln("Reloading GeoIP...")
+			geoIp.ReInitGeoIpDB()
 			runtime.GC()
 		}()
 		c.String(200, "ok")
