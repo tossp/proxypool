@@ -99,6 +99,8 @@ func SpeedTestAllWithWorkpool(proxies []proxy.Proxy, conns int) {
 	for _, p := range proxies {
 		pp := p
 		pool.Submit(func() {
+			start := time.Now()
+
 			speed, err := ProxySpeedTest(pp)
 			if err == nil || speed > 0 {
 				m.Lock()
@@ -113,6 +115,11 @@ func SpeedTestAllWithWorkpool(proxies []proxy.Proxy, conns int) {
 				resultCount++
 				m.Unlock()
 			}
+
+			if time.Since(start) > (SpeedTimeout + 10*time.Second) {
+				fmt.Printf("SpeedTimeout: %s\n", pp.ToClash())
+			}
+
 			doneCount++
 			progress := float64(doneCount) * 100 / float64(len(proxies))
 			fmt.Printf("\r\t[%5.1f%% DONE]", progress)
