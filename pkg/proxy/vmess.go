@@ -105,8 +105,14 @@ func (v Vmess) ToSurge() string {
 				wsHeasers += "|" + k + ":" + v
 			}
 		}
+
+		wsPath := v.WSPath
+		if v.WSPath == "" {
+			wsPath = "/"
+		}
+
 		text := fmt.Sprintf("%s = vmess, %s, %d, username=%s, alterId=%d, ws=true, tls=%t, ws-path=%s, skip-cert-verify=%v, vmess-aead=true",
-			v.Name, v.Server, v.Port, v.UUID, v.AlterID, v.TLS, v.WSPath, v.SkipCertVerify)
+			v.Name, v.Server, v.Port, v.UUID, v.AlterID, v.TLS, wsPath, v.SkipCertVerify)
 		if wsHeasers != "" {
 			// text += ", ws-headers=" + wsHeasers
 			text += fmt.Sprintf(`, ws-headers="%s|%s"`, wsHeasers, config.Config.V2WsHeaderUserAgent)
