@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"math"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -99,6 +100,24 @@ func CleanBadProxiesWithWorkpool(proxies []proxy.Proxy) (cproxies []proxy.Proxy)
 		pp := p
 		pool.Submit(func() {
 			start := time.Now()
+			defer func() {
+				if time.Since(start) > (defaultURLTestTimeout + 5*time.Second) {
+					fmt.Printf("testDelay cost [%v]: %s\n", time.Since(start), pp.ToClash())
+
+					ps := Stat{
+						Id:    pp.Identifier(),
+						Delay: math.MaxUint16,
+					}
+					m.Lock()
+					ProxyInvalidStats = append(ProxyInvalidStats, ps)
+					m.Unlock()
+				}
+			}()
+
+			if _, ok := ProxyInvalidStats.Find(pp); ok {
+				// 跳过无效节点
+				return
+			}
 
 			delay, err := testDelay(pp)
 			if err == nil && delay != 0 {
@@ -115,10 +134,6 @@ func CleanBadProxiesWithWorkpool(proxies []proxy.Proxy) (cproxies []proxy.Proxy)
 					m.Unlock()
 					c <- ps
 				}
-			}
-
-			if time.Since(start) > (defaultURLTestTimeout) {
-				fmt.Printf("testDelay cost [%v]: %s\n", time.Since(start), pp.ToClash())
 			}
 
 			fmt.Printf("\r\t%d/%d", atomic.AddUint32(&doneCount, 1), total)
