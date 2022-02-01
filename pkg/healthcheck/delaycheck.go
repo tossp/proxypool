@@ -101,9 +101,8 @@ func CleanBadProxiesWithWorkpool(proxies []proxy.Proxy) (cproxies []proxy.Proxy)
 		pool.Submit(func() {
 			start := time.Now()
 			defer func() {
-				if time.Since(start) > (defaultURLTestTimeout + 5*time.Second) {
+				if time.Since(start) > (2 * time.Minute) {
 					fmt.Printf("testDelay cost [%v]: %s\n", time.Since(start), pp.ToClash())
-
 					ps := Stat{
 						Id:    pp.Identifier(),
 						Delay: math.MaxUint16,
@@ -116,6 +115,7 @@ func CleanBadProxiesWithWorkpool(proxies []proxy.Proxy) (cproxies []proxy.Proxy)
 
 			if _, ok := ProxyInvalidStats.Find(pp); ok {
 				// 跳过无效节点
+				fmt.Printf("\r\t%d/%d", atomic.AddUint32(&doneCount, 1), total)
 				return
 			}
 
