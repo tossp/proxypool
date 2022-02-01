@@ -98,6 +98,8 @@ func CleanBadProxiesWithWorkpool(proxies []proxy.Proxy) (cproxies []proxy.Proxy)
 	for _, p := range proxies {
 		pp := p
 		pool.Submit(func() {
+			start := time.Now()
+
 			delay, err := testDelay(pp)
 			if err == nil && delay != 0 {
 				if ps, ok := ProxyStats.Find(pp); ok {
@@ -114,6 +116,11 @@ func CleanBadProxiesWithWorkpool(proxies []proxy.Proxy) (cproxies []proxy.Proxy)
 					c <- ps
 				}
 			}
+
+			if time.Since(start) > (defaultURLTestTimeout) {
+				fmt.Printf("testDelay cost [%v]: %s\n", time.Since(start), pp.ToClash())
+			}
+
 			fmt.Printf("\r\t%d/%d", atomic.AddUint32(&doneCount, 1), total)
 		})
 	}
