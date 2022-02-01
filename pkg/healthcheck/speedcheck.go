@@ -117,7 +117,7 @@ func SpeedTestAllWithWorkpool(proxies []proxy.Proxy, conns int) {
 			}
 
 			if time.Since(start) > (SpeedTimeout + 10*time.Second) {
-				fmt.Printf("SpeedTimeout: %s\n", pp.ToClash())
+				fmt.Printf("SpeedTimeout [%v]: %s\n", time.Since(start), pp.ToClash())
 			}
 
 			doneCount++
