@@ -254,7 +254,9 @@ func (ps *ProxyList) Find(new Proxy) bool {
 		return false
 	}
 	for i := range *ps {
-		return (*ps)[i].Identifier() == new.Identifier()
+		if (*ps)[i].Identifier() == new.Identifier() {
+			return true
+		}
 	}
 	return false
 }

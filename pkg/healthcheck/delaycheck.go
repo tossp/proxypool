@@ -105,17 +105,18 @@ func CleanBadProxiesWithWorkpool(proxies []proxy.Proxy) (cproxies []proxy.Proxy)
 				if time.Since(start) > (2 * time.Minute) {
 					fmt.Printf("testDelay cost [%v]: %s\n", time.Since(start), pp.ToClash())
 					m.Lock()
-					ProxyInvalidStats.UniqAppendProxy(pp)
+					ProxyInvalidStats = ProxyInvalidStats.UniqAppendProxy(pp)
 					m.Unlock()
 				}
 			}()
-
+			m.Lock()
 			if ok := ProxyInvalidStats.Find(pp); ok {
+				m.Unlock()
 				// 跳过无效节点
-				fmt.Println("\n skip:", pp.ToClash())
 				fmt.Printf("\r\t%d/%d", atomic.AddUint32(&doneCount, 1), total)
 				return
 			}
+			m.Unlock()
 
 			delay, err := testDelay(pp)
 			if err == nil && delay != 0 {
