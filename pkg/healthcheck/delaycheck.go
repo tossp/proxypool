@@ -4,10 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"math"
 	"sync"
 	"sync/atomic"
 	"time"
+
+	"github.com/One-Piecs/proxypool/internal/database"
 
 	"github.com/gammazero/workerpool"
 
@@ -103,18 +104,15 @@ func CleanBadProxiesWithWorkpool(proxies []proxy.Proxy) (cproxies []proxy.Proxy)
 			defer func() {
 				if time.Since(start) > (2 * time.Minute) {
 					fmt.Printf("testDelay cost [%v]: %s\n", time.Since(start), pp.ToClash())
-					ps := Stat{
-						Id:    pp.Identifier(),
-						Delay: math.MaxUint16,
-					}
 					m.Lock()
-					ProxyInvalidStats = append(ProxyInvalidStats, ps)
+					ProxyInvalidStats.UniqAppendProxy(pp)
 					m.Unlock()
 				}
 			}()
 
-			if _, ok := ProxyInvalidStats.Find(pp); ok {
+			if ok := ProxyInvalidStats.Find(pp); ok {
 				// 跳过无效节点
+				fmt.Println("\n skip:", pp.ToClash())
 				fmt.Printf("\r\t%d/%d", atomic.AddUint32(&doneCount, 1), total)
 				return
 			}
@@ -146,6 +144,9 @@ func CleanBadProxiesWithWorkpool(proxies []proxy.Proxy) (cproxies []proxy.Proxy)
 	go func() {
 		pool.StopWait()
 		done <- struct{}{}
+
+		database.SaveBlockProxyList(ProxyInvalidStats)
+
 		fmt.Println()
 	}()
 
@@ -165,6 +166,7 @@ func CleanBadProxiesWithWorkpool(proxies []proxy.Proxy) (cproxies []proxy.Proxy)
 					cproxies = append(cproxies, proxies[i]) // 返回对GC不友好的指针看会怎么样
 				}
 			}
+
 			return
 		}
 	}

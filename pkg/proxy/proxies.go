@@ -248,3 +248,13 @@ func (ps *ProxyList) UniqAppendProxy(new Proxy) ProxyList {
 	*ps = append(*ps, new)
 	return *ps
 }
+
+func (ps *ProxyList) Find(new Proxy) bool {
+	if len(*ps) == 0 {
+		return false
+	}
+	for i := range *ps {
+		return (*ps)[i].Identifier() == new.Identifier()
+	}
+	return false
+}

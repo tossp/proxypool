@@ -27,6 +27,7 @@ func CrawlGo() {
 	}
 	proxies := cache.GetProxies("allproxies")
 	dbProxies := database.GetAllProxies()
+	healthcheck.ProxyInvalidStats = database.GetAllBlockProxies()
 	// Show last time result when launch
 	if proxies == nil && dbProxies != nil {
 		cache.SetProxies("proxies", dbProxies)
@@ -153,6 +154,7 @@ func CrawlGo() {
 	cache.UsefullVmessProxiesCount = proxies.TypeLen("vmess")
 	cache.UsefullTrojanProxiesCount = proxies.TypeLen("trojan")
 	database.SaveProxyList(proxies)
+	// database.SaveBlockProxyList(healthcheck.ProxyInvalidStats)
 	database.ClearOldItems()
 
 	log.Infoln("Usablility checking done. Open %s to check", config.Config.Domain+":"+config.Config.Port)

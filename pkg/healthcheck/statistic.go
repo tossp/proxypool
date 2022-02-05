@@ -20,7 +20,7 @@ type StatList []Stat
 var ProxyStats StatList
 
 // 延迟超长的节点，目前看是 trojan
-var ProxyInvalidStats StatList
+var ProxyInvalidStats proxy.ProxyList
 
 func init() {
 	ProxyStats = make(StatList, 0)

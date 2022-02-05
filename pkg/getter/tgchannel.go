@@ -137,9 +137,14 @@ func (g *TGChannelGetter) Get() proxy.ProxyList {
 						subResult := make(proxy.ProxyList, 0)
 						if strings.Contains(e, "yaml") || strings.Contains(e, "yml") {
 							subResult = append(subResult, (&Clash{Url: e}).Get()...)
+						} else if strings.Contains(e, ".mp4") ||
+							strings.Contains(e, ".jpg") ||
+							strings.Contains(e, ".jpeg") {
+							continue
 						} else {
 							subResult = append(subResult, (&WebFuzz{Url: e}).Get()...)
 							subResult = append(subResult, (&Subscribe{Url: e}).Get()...)
+							subResult = append(subResult, (&Clash{Url: e}).Get()...)
 						}
 
 						log.Infoln("STATISTIC: TGChannel\tcost=%v\tcount=%d\turl=%s\tsub_url=%s",

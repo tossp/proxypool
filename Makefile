@@ -35,7 +35,7 @@ docker2:
 		-v "$(shell PWD)":/go/src/$(NAME) \
 		-w /go/src/$(NAME) \
 		golang:1.17.6-alpine \
-		bash -c "$(GOBUILD) -o $(BINDIR)/$(NAME)-$@"
+		sh -c "$(GOBUILD) -o $(BINDIR)/$(NAME)-$@"
 
 docker:
 	$(GOBUILD) -o $(BINDIR)/$(NAME)-$@
