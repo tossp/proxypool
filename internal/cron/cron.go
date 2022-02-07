@@ -4,12 +4,12 @@ import (
 	"runtime"
 
 	"github.com/One-Piecs/proxypool/config"
+	"github.com/One-Piecs/proxypool/internal/app"
 	"github.com/One-Piecs/proxypool/internal/cache"
 	"github.com/One-Piecs/proxypool/log"
+	"github.com/One-Piecs/proxypool/pkg/geoIp"
 	"github.com/One-Piecs/proxypool/pkg/healthcheck"
 	"github.com/One-Piecs/proxypool/pkg/provider"
-
-	"github.com/One-Piecs/proxypool/internal/app"
 	"github.com/jasonlvhit/gocron"
 )
 
@@ -17,6 +17,7 @@ func Cron() {
 	_ = gocron.Every(config.Config.CrawlInterval).Minutes().Do(crawlTask)
 	_ = gocron.Every(config.Config.SpeedTestInterval).Minutes().Do(speedTestTask)
 	_ = gocron.Every(config.Config.ActiveInterval).Minutes().Do(frequentSpeedTestTask)
+	_ = gocron.Every(1).Weeks().Do(geoIp.UpdateGeoIP)
 	<-gocron.Start()
 }
 

@@ -4,11 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net"
+	"net/http"
 	"os"
 
 	"github.com/One-Piecs/proxypool/config"
+	"github.com/One-Piecs/proxypool/log"
 
 	// bingeoip "github.com/One-Piecs/proxypool/internal/bindata/geoip"
 
@@ -16,6 +17,13 @@ import (
 )
 
 var GeoIpDB GeoIP
+
+var GeoIpDBCurVersion string
+
+const (
+	GeoIpDBUrl        = "http://www.ideame.top/mmdb/Country.mmdb"
+	GeoIpDBVersionUrl = "http://www.ideame.top/mmdb/version"
+)
 
 func InitGeoIpDB() error {
 	// geodb := "assets/GeoLite2-City.mmdb"
@@ -37,6 +45,7 @@ func InitGeoIpDB() error {
 	// }
 
 	// https://raw.githubusercontent.com/alecthw/mmdb_china_ip_list/release/Country.mmdb
+	// http://www.ideame.top/mmdb/version
 	GeoIpDB = NewGeoIP("assets/Country.mmdb", "assets/flags.json")
 	return nil
 }
@@ -66,17 +75,23 @@ func NewGeoIP(geodb, flags string) (geoip GeoIP) {
 	db, err := geoip2.Open(geodb)
 	if err != nil {
 		// log.Println(err)
-		buf, err := config.GeoIpFS.ReadFile(geodb)
+		buf, err := GeoIpBinary(GeoIpDBUrl)
 		if err != nil {
-			log.Fatal(err)
-			return
+			panic(err)
 		}
 
 		db, err = geoip2.FromBytes(buf)
 		if err != nil {
-			log.Fatal(err)
-			return
+			panic(err)
 		}
+
+		ver, err := GeoIpVersion(GeoIpDBVersionUrl)
+		if err != nil {
+			panic(err)
+		}
+
+		GeoIpDBCurVersion = ver
+
 	}
 	geoip.db = db
 
@@ -87,23 +102,20 @@ func NewGeoIP(geodb, flags string) (geoip GeoIP) {
 		// os.Exit(1)
 		flagsData, err = config.GeoIpFS.ReadFile(flags)
 		if err != nil {
-			log.Fatal(err)
-			return
+			panic(err)
 		}
 
 	} else {
 		flagsData, err = ioutil.ReadFile(flags)
 		if err != nil {
-			log.Fatal(err)
-			return
+			panic(err)
 		}
 	}
 
 	countryEmojiList := make([]CountryEmoji, 0)
 	err = json.Unmarshal(flagsData, &countryEmojiList)
 	if err != nil {
-		log.Fatalln(err.Error())
-		return
+		panic(err.Error())
 	}
 
 	emojiMap := make(map[string]string)
@@ -113,6 +125,98 @@ func NewGeoIP(geodb, flags string) (geoip GeoIP) {
 	geoip.emojiMap = emojiMap
 
 	return
+}
+
+func GeoIpBinary(url string) (data []byte, err error) {
+	// Create client
+	client := &http.Client{}
+
+	// Create request
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		fmt.Println("GeoIpBinary NewRequest Failure : ", err)
+		return nil, err
+	}
+
+	// Fetch Request
+	resp, err := client.Do(req)
+	if err != nil {
+		fmt.Println("GeoIpBinary Failure : ", err)
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("Get Country.mmdb: %v", resp.StatusCode)
+	}
+
+	// Read Response Body
+	return ioutil.ReadAll(resp.Body)
+}
+
+func GeoIpVersion(url string) (version string, err error) {
+	// Create client
+	client := &http.Client{}
+
+	// Create request
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		fmt.Println("GeoIpBinary NewRequest Failure : ", err)
+		return "", err
+	}
+
+	// Fetch Request
+	resp, err := client.Do(req)
+	if err != nil {
+		fmt.Println("GeoIpBinary Failure : ", err)
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("Get Country.mmdb: %v", resp.StatusCode)
+	}
+
+	// Read Response Body
+	respBody, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+
+	return string(respBody), nil
+}
+
+// new geoip from db file
+func UpdateGeoIP() {
+	if GeoIpDBCurVersion == "" {
+		return
+	}
+
+	ver, err := GeoIpVersion(GeoIpDBVersionUrl)
+	if err != nil {
+		log.Errorln("GeoIpVersion: %v", err)
+		return
+	}
+	if GeoIpDBCurVersion != ver {
+		// log.Println(err)
+		buf, err := GeoIpBinary(GeoIpDBUrl)
+		if err != nil {
+			log.Errorln("GeoIpBinary: %v", err)
+			return
+		}
+
+		db, err := geoip2.FromBytes(buf)
+		if err != nil {
+			log.Errorln("geoip2 load GeoIpBinary: %v", err)
+			return
+		}
+
+		oldDB := GeoIpDB.db
+		defer oldDB.Close()
+
+		GeoIpDB.db = db
+		GeoIpDBCurVersion = ver
+	}
 }
 
 // Find ip info

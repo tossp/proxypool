@@ -80,6 +80,7 @@ func setupRouter() {
 			"last_crawl_time":             appcache.LastCrawlTime,
 			"is_speed_test":               appcache.IsSpeedTest,
 			"version":                     version,
+			"geo_ip_db_version":           geoIp.GeoIpDBCurVersion,
 		})
 	})
 
@@ -374,7 +375,8 @@ func setupRouter() {
 	router.GET("/task/updateGeoIP", func(c *gin.Context) {
 		go func() {
 			log.Infoln("Reloading GeoIP...")
-			geoIp.ReInitGeoIpDB()
+			// geoIp.ReInitGeoIpDB()
+			geoIp.UpdateGeoIP()
 			runtime.GC()
 		}()
 		c.String(200, "ok")

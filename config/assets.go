@@ -8,6 +8,5 @@ var HtmlFs embed.FS
 //go:embed assets/static/*
 var StaticFS embed.FS
 
-//go:embed assets/Country.mmdb
 //go:embed assets/flags.json
 var GeoIpFS embed.FS
