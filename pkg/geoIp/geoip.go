@@ -70,7 +70,7 @@ func NewGeoIP(geodb, flags string) (geoip GeoIP) {
 	db, err := geoip2.Open(geodb)
 	if err != nil {
 		// log.Println(err)
-		buf, err := GeoIpBinary(config.Config.GeoipDbUrl + "Country.mmdb")
+		buf, err := GeoIpBinary(config.Config.GeoipDbUrl + "lite/Country.mmdb")
 		if err != nil {
 			panic(err)
 		}
@@ -194,7 +194,7 @@ func UpdateGeoIP() {
 	}
 	if GeoIpDBCurVersion != ver {
 		// log.Println(err)
-		buf, err := GeoIpBinary(config.Config.GeoipDbUrl + "Country.mmdb")
+		buf, err := GeoIpBinary(config.Config.GeoipDbUrl + "lite/Country.mmdb")
 		if err != nil {
 			log.Errorln("GeoIpBinary: %v", err)
 			return
