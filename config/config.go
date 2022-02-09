@@ -33,6 +33,7 @@ type ConfigOptions struct {
 	ActiveMaxNumber       uint16   `json:"active-max-number" yaml:"active-max-number"`
 	TgChannelProxyUrl     string   `json:"tg_channel_proxy_url" yaml:"tg_channel_proxy_url"`
 	V2WsHeaderUserAgent   string   `json:"v2_ws_header_user_agent" yaml:"v2_ws_header_user_agent"`
+	GeoipDbUrl            string   `json:"geoip_db_url" yaml:"geoip_db_url"`
 }
 
 // Config 配置
@@ -80,6 +81,10 @@ func Parse(path string) error {
 
 	if Config.V2WsHeaderUserAgent == "" {
 		Config.V2WsHeaderUserAgent = "user-agent:Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1"
+	}
+
+	if Config.GeoipDbUrl == "" {
+		Config.GeoipDbUrl = "https://cdn.jsdelivr.net/gh/alecthw/mmdb_china_ip_list@release/"
 	}
 
 	// 部分配置环境变量优先

@@ -20,11 +20,6 @@ var GeoIpDB GeoIP
 
 var GeoIpDBCurVersion string
 
-const (
-	GeoIpDBUrl        = "http://www.ideame.top/mmdb/Country.mmdb"
-	GeoIpDBVersionUrl = "http://www.ideame.top/mmdb/version"
-)
-
 func InitGeoIpDB() error {
 	// geodb := "assets/GeoLite2-City.mmdb"
 	// // 判断文件是否存在
@@ -75,7 +70,7 @@ func NewGeoIP(geodb, flags string) (geoip GeoIP) {
 	db, err := geoip2.Open(geodb)
 	if err != nil {
 		// log.Println(err)
-		buf, err := GeoIpBinary(GeoIpDBUrl)
+		buf, err := GeoIpBinary(config.Config.GeoipDbUrl + "Country.mmdb")
 		if err != nil {
 			panic(err)
 		}
@@ -85,7 +80,7 @@ func NewGeoIP(geodb, flags string) (geoip GeoIP) {
 			panic(err)
 		}
 
-		ver, err := GeoIpVersion(GeoIpDBVersionUrl)
+		ver, err := GeoIpVersion(config.Config.GeoipDbUrl + "version")
 		if err != nil {
 			panic(err)
 		}
@@ -192,14 +187,14 @@ func UpdateGeoIP() {
 		return
 	}
 
-	ver, err := GeoIpVersion(GeoIpDBVersionUrl)
+	ver, err := GeoIpVersion(config.Config.GeoipDbUrl + "version")
 	if err != nil {
 		log.Errorln("GeoIpVersion: %v", err)
 		return
 	}
 	if GeoIpDBCurVersion != ver {
 		// log.Println(err)
-		buf, err := GeoIpBinary(GeoIpDBUrl)
+		buf, err := GeoIpBinary(config.Config.GeoipDbUrl + "Country.mmdb")
 		if err != nil {
 			log.Errorln("GeoIpBinary: %v", err)
 			return
