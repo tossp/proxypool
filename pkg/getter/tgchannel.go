@@ -7,11 +7,11 @@ import (
 	"sync"
 	"time"
 
+	conf "github.com/One-Piecs/proxypool/config"
+
 	"github.com/gammazero/workerpool"
 
 	"github.com/One-Piecs/proxypool/log"
-
-	conf "github.com/One-Piecs/proxypool/config"
 
 	"github.com/One-Piecs/proxypool/pkg/proxy"
 	"github.com/One-Piecs/proxypool/pkg/tool"
@@ -63,8 +63,8 @@ func NewTGChannelGetter(options tool.Options) (getter Getter, err error) {
 			NumNeeded: t,
 			Url:       "https://t.me/s/" + url,
 			// apiUrl:    "https://tg.i-c-a.su/rss/" + url,
-			apiUrl: conf.Config.TgChannelProxyUrl + url,
-			// apiUrl: conf.Config.TgChannelProxyUrl + url + fmt.Sprintf(`?limit=%d`, t),
+			// apiUrl: conf.Config.TgChannelProxyUrl + url,
+			apiUrl:   conf.Config.TgChannelProxyUrl + url + fmt.Sprintf(`?limit=%d`, t),
 			onlyFile: only_file,
 		}, nil
 	}
@@ -82,6 +82,7 @@ func (g *TGChannelGetter) Get() proxy.ProxyList {
 			subUrls := urlRe.FindAllString(e.Text, -1)
 			for _, url := range subUrls {
 				result = append(result, (&Subscribe{Url: url}).Get()...)
+				result = append(result, (&Clash{Url: url}).Get()...)
 			}
 		})
 
