@@ -17,7 +17,7 @@ func Cron() {
 	_ = gocron.Every(config.Config.CrawlInterval).Minutes().Do(crawlTask)
 	_ = gocron.Every(config.Config.SpeedTestInterval).Minutes().Do(speedTestTask)
 	_ = gocron.Every(config.Config.ActiveInterval).Minutes().Do(frequentSpeedTestTask)
-	_ = gocron.Every(1).Weeks().Do(geoIp.UpdateGeoIP)
+	_ = gocron.Every(1).Day().At("04:30").Do(geoIp.UpdateGeoIP)
 	<-gocron.Start()
 }
 
