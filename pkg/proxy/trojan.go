@@ -64,6 +64,9 @@ func (t Trojan) ToSurge() string {
 func (t Trojan) ToLoon() string {
 	// 节点名称 = 协议，服务器地址，端口，密码，tls-name：tls名字，skip-cert-verify：是否跳过证书校验（默认否）
 	// 7 = trojan, 1.2.3.4, 443,password,tls-name:youtTlsServerName.com,skip-cert-verify:false
+	// TODO: #trojan
+	// trojan1 = trojan,example.com,443,"password",skip-cert-verify=false,tls-name=example.com
+	// trojan2 = trojan,example.com,443,"password",transport=ws,path=/,host=micsoft.com,skip-cert-verify=true,tls-name=example.com,udp=true
 	return fmt.Sprintf("%s = trojan, %s, %d, %s, tls-name:%v, skip-cert-verify:%v",
 		t.Name, t.Server, t.Port, t.Password, t.Server, t.SkipCertVerify)
 }
