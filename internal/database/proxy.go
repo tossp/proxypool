@@ -21,15 +21,6 @@ type Proxy struct {
 	Identifier string `gorm:"unique"`
 }
 
-type BlockProxy struct {
-	ID        uint `gorm:"primarykey"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	proxy.Base
-	Link       string
-	Identifier string `gorm:"unique"`
-}
-
 func InitTables() {
 	if DB == nil {
 		err := connect()
@@ -40,12 +31,6 @@ func InitTables() {
 	// Warnln: 自动迁移仅仅会创建表，缺少列和索引，并且不会改变现有列的类型或删除未使用的列以保护数据。
 	// 如更改表的Column请于数据库中操作
 	err := DB.AutoMigrate(&Proxy{})
-	if err != nil {
-		log.Errorln("\n\t\t[db/proxy.go] database migration failed")
-		panic(err)
-	}
-
-	err = DB.AutoMigrate(&BlockProxy{})
 	if err != nil {
 		log.Errorln("\n\t\t[db/proxy.go] database migration failed")
 		panic(err)
@@ -86,36 +71,6 @@ func SaveProxyList(pl proxy.ProxyList) {
 	})
 }
 
-func SaveBlockProxyList(pl proxy.ProxyList) {
-	if DB == nil {
-		return
-	}
-
-	_ = DB.Transaction(func(tx *gorm.DB) error {
-		// Create or Update proxies
-		for i := 0; i < pl.Len(); i++ {
-			p := BlockProxy{
-				Base:       *pl[i].BaseInfo(),
-				Link:       pl[i].Link(),
-				Identifier: pl[i].Identifier(),
-			}
-			p.Useable = true
-			if err := DB.Create(&p).Error; err != nil {
-				// Update with Identifier
-				if uperr := DB.Model(&BlockProxy{}).Where("identifier = ?", p.Identifier).Updates(&Proxy{
-					Base: proxy.Base{Useable: true, Name: p.Name, Country: p.Country},
-				}).Error; uperr != nil {
-					log.Warnln("\n\t\tdatabase: Update failed:"+
-						"\n\t\tdatabase: When Created item: %s"+
-						"\n\t\tdatabase: When Updated item: %s", err.Error(), uperr.Error())
-				}
-			}
-		}
-		log.Infoln("database: Updated")
-		return nil
-	})
-}
-
 // Get a proxy list consists of all proxies in database
 func GetAllProxies() (proxies proxy.ProxyList) {
 	proxies = make(proxy.ProxyList, 0)
@@ -124,34 +79,6 @@ func GetAllProxies() (proxies proxy.ProxyList) {
 	}
 
 	proxiesDB := make([]Proxy, 0)
-	DB.Select("link").Find(&proxiesDB)
-
-	wp := workerpool.New(100)
-	m := sync.Mutex{}
-
-	for _, proxyDB := range proxiesDB {
-		pDB := proxyDB
-		wp.Submit(func() {
-			p, err := proxy.ParseProxyFromLink(pDB.Link)
-			if err == nil && p != nil {
-				p.SetUseable(false)
-				m.Lock()
-				proxies = append(proxies, p)
-				m.Unlock()
-			}
-		})
-	}
-	wp.StopWait()
-	return
-}
-
-func GetAllBlockProxies() (proxies proxy.ProxyList) {
-	proxies = make(proxy.ProxyList, 0)
-	if DB == nil {
-		return nil
-	}
-
-	proxiesDB := make([]BlockProxy, 0)
 	DB.Select("link").Find(&proxiesDB)
 
 	wp := workerpool.New(100)

@@ -19,9 +19,6 @@ type StatList []Stat
 // ProxyStats stores proxies' statistics
 var ProxyStats StatList
 
-// 延迟超长的节点，目前看是 trojan
-var ProxyInvalidStats proxy.ProxyList
-
 func init() {
 	ProxyStats = make(StatList, 0)
 }
