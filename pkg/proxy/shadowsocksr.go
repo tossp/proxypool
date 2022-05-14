@@ -62,6 +62,8 @@ func (ssr ShadowsocksR) ToLoon() string {
 	// 节点名称 = 协议，服务器地址，服务器端口，加密协议，密码，
 	// ShadowsocksR, , 1.2.3.4, 443, aes-128-gcm, "password"
 	// 3 = ShadowsocksR, 1.2.3.4, 443, aes-256-cfb,"password",auth_aes128_md5,{},tls1.2_ticket_auth,{}
+	// TODO: #ssr
+	// # 节点名称 = 协议，服务器地址，端口，加密方式，密码，protocol = 协议，protocol-param = 协议参数，obfs=混淆，obfs-param=混淆参数
 	return fmt.Sprintf(`%s = ShadowsocksR,%s,%d,%s,"%s",%s,{%s},%s,{%s}`,
 		ssr.Name, ssr.Server, ssr.Port, ssr.Cipher, ssr.Password,
 		ssr.Protocol, ssr.ProtocolParam, ssr.Obfs, ssr.ObfsParam)

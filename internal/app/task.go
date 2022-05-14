@@ -27,7 +27,6 @@ func CrawlGo() {
 	}
 	proxies := cache.GetProxies("allproxies")
 	dbProxies := database.GetAllProxies()
-	healthcheck.ProxyInvalidStats = database.GetAllBlockProxies()
 	// Show last time result when launch
 	if proxies == nil && dbProxies != nil {
 		cache.SetProxies("proxies", dbProxies)

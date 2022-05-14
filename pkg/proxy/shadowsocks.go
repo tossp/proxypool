@@ -13,10 +13,8 @@ import (
 	"github.com/One-Piecs/proxypool/pkg/tool"
 )
 
-var (
-	// ErrorNotSSLink is an error type
-	ErrorNotSSLink = errors.New("not a correct ss link")
-)
+// ErrorNotSSLink is an error type
+var ErrorNotSSLink = errors.New("not a correct ss link")
 
 // Shadowsocks is a type of proxy
 type Shadowsocks struct {
@@ -70,9 +68,15 @@ func (ss Shadowsocks) ToLoon() string {
 	// 节点名称 = 协议，服务器地址，服务器端口，加密协议，密码，
 	// Shadowsocks, 1.2.3.4, 443, aes-128-gcm, "password"
 	if ss.Plugin == "obfs" {
+		// TODO: #ss+simple obfs
+		// ssObfs1 = Shadowsocks,example.com,80,aes-128-gcm,"password",obfs-name=http,obfs-host=www.micsoft.com,fast-open=true,udp=true
+		// ssObfs2 = Shadowsocks,example.com,443,aes-128-gcm,"password",obfs-name=tls,obfs-host=www.micsoft.com,fast-open=true,udp=true
 		return fmt.Sprintf(`%s = Shadowsocks,%s,%d,%s,"%s",%s,%s`,
 			ss.Name, ss.Server, ss.Port, ss.Cipher, ss.Password, ss.PluginOpts["mode"], ss.PluginOpts["host"])
 	} else {
+		// TODO: #ss
+		// ss1 = Shadowsocks,example.com,443,aes-128-gcm,"password",fast-open=false,udp=true
+		// ss2 = Shadowsocks,example2.com,443,chacha20,"password",fast-open=true,udp=true
 		return fmt.Sprintf(`%s = Shadowsocks,%s,%d,%s,"%s",,`,
 			ss.Name, ss.Server, ss.Port, ss.Cipher, ss.Password)
 	}
@@ -167,9 +171,7 @@ func ParseSSLink(link string) (*Shadowsocks, error) {
 	}, nil
 }
 
-var (
-	ssPlainRe = regexp.MustCompile("ss://([A-Za-z0-9+/_&?=@:%.-])+")
-)
+var ssPlainRe = regexp.MustCompile("ss://([A-Za-z0-9+/_&?=@:%.-])+")
 
 // GrepSSLinkFromString() remove web fuzz characters before a ss link
 func GrepSSLinkFromString(text string) []string {

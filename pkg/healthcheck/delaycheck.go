@@ -8,8 +8,6 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/One-Piecs/proxypool/internal/database"
-
 	"github.com/gammazero/workerpool"
 
 	"github.com/Dreamacro/clash/adapter"
@@ -100,24 +98,6 @@ func CleanBadProxiesWithWorkpool(proxies []proxy.Proxy) (cproxies []proxy.Proxy)
 	for _, p := range proxies {
 		pp := p
 		pool.Submit(func() {
-			start := time.Now()
-			defer func() {
-				if time.Since(start) > (2 * time.Minute) {
-					fmt.Printf("testDelay cost [%v]: %s\n", time.Since(start), pp.ToClash())
-					m.Lock()
-					ProxyInvalidStats = ProxyInvalidStats.UniqAppendProxy(pp)
-					m.Unlock()
-				}
-			}()
-			m.Lock()
-			if ok := ProxyInvalidStats.Find(pp); ok {
-				m.Unlock()
-				// 跳过无效节点
-				fmt.Printf("\r\t%d/%d", atomic.AddUint32(&doneCount, 1), total)
-				return
-			}
-			m.Unlock()
-
 			delay, err := testDelay(pp)
 			if err == nil && delay != 0 {
 				if ps, ok := ProxyStats.Find(pp); ok {
@@ -145,8 +125,6 @@ func CleanBadProxiesWithWorkpool(proxies []proxy.Proxy) (cproxies []proxy.Proxy)
 	go func() {
 		pool.StopWait()
 		done <- struct{}{}
-
-		database.SaveBlockProxyList(ProxyInvalidStats)
 
 		fmt.Println()
 	}()

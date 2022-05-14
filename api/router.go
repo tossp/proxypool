@@ -8,7 +8,9 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/One-Piecs/proxypool/log"
 	"github.com/One-Piecs/proxypool/pkg/geoIp"
+	"github.com/One-Piecs/proxypool/pkg/provider"
 
 	"github.com/One-Piecs/proxypool/internal/app"
 	// "github.com/One-Piecs/proxypool/internal/bindata"
@@ -16,8 +18,6 @@ import (
 
 	"github.com/One-Piecs/proxypool/config"
 	appcache "github.com/One-Piecs/proxypool/internal/cache"
-	"github.com/One-Piecs/proxypool/log"
-	"github.com/One-Piecs/proxypool/pkg/provider"
 	"github.com/gin-contrib/cache"
 	"github.com/gin-contrib/cache/persistence"
 	"github.com/gin-contrib/pprof"
@@ -46,6 +46,7 @@ func setupRouter() {
 	store := persistence.NewInMemoryStore(time.Minute)
 	router.Use(gin.Recovery(), cache.SiteCache(store, time.Minute)) // 加上处理panic的中间件，防止遇到panic退出程序
 
+	// router.Use(gin.Recovery())
 	pprof.Register(router)
 	router.GET("/debug/statsviz/*filepath", func(context *gin.Context) {
 		if context.Param("filepath") == "/ws" {
